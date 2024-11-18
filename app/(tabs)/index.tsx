@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Feather";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { ProductList } from "@/components/ProductList";
 
 export default function HomeScreen() {
@@ -25,7 +26,7 @@ export default function HomeScreen() {
               <Text style={styles.title}>Foodgo</Text>
               <Text style={styles.subtitle}>Order your favourite food!</Text>
             </View>
-            <Image source={require("../assets/images/userIcon.png")} />
+            <Image source={require("../../assets/images/userIcon.png")} />
           </View>
           <View style={styles.searchContainer}>
             <View style={styles.searchBox}>
@@ -79,12 +80,13 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id.toString()}
             style={styles.productList}
             renderItem={({ item }) => (
-              <View style={styles.productContainer}>
+              <TouchableOpacity style={styles.productContainer}>
                 <View style={styles.imageContainer}>
                   <Image
                     source={{ uri: item.imageUrl }}
                     style={styles.productImage}
                     alt={item.name}
+                    resizeMode="contain"
                   />
                 </View>
                 <View style={styles.productDetails}>
@@ -93,12 +95,17 @@ export default function HomeScreen() {
                 </View>
                 <View style={styles.ratingContainer}>
                   <View style={styles.rating}>
-                    <Text>{item.rating}</Text>
-                    <Icon name="star" color={"#FF9633"} size={20} />
+                    <FontAwesome name="star" color={"#FF9633"} size={20} />
+                    <Text style={{ fontWeight: "600" }}>{item.rating}</Text>
                   </View>
-                  <Icon name="heart" color={"#3C2F2F"} size={20} />
+                  <Icon
+                    name="heart"
+                    color={"#3C2F2F"}
+                    size={20}
+                    style={{ fontWeight: "bold" }}
+                  />
                 </View>
-              </View>
+              </TouchableOpacity>
             )}
           />
         </View>
@@ -115,7 +122,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "column",
     gap: 8,
-    paddingTop: 5,
+    paddingTop: 10,
   },
   header: {
     flexDirection: "row",
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: "row",
-    paddingTop: 2,
+    paddingTop: 16,
     justifyContent: "space-between",
     gap: 8,
     alignItems: "center",
@@ -153,7 +160,7 @@ const styles = StyleSheet.create({
   searchIcon: {
     position: "absolute",
     left: 8,
-    top: 10,
+    top: 12,
     zIndex: 20,
   },
   searchInput: {
@@ -162,7 +169,7 @@ const styles = StyleSheet.create({
     color: "#3C2F2F",
     fontSize: 18,
     fontWeight: "semibold",
-    paddingLeft: 54,
+    paddingLeft: 50,
     paddingVertical: 12,
     fontFamily: "roboto",
     zIndex: 10,
@@ -180,14 +187,15 @@ const styles = StyleSheet.create({
   },
   slideList: {
     paddingLeft: 5,
+    paddingTop: 20,
   },
   slideItem: {
     marginLeft: 8,
   },
   slideButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 30,
+    paddingVertical: 8,
+    paddingHorizontal: 26,
+    borderRadius: 20,
   },
   activeSlide: {
     backgroundColor: "#EF2A39",
@@ -196,8 +204,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
   },
   slideText: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: "500",
     fontFamily: "inter",
   },
   activeSlideText: {
@@ -211,10 +219,11 @@ const styles = StyleSheet.create({
   },
   productContainer: {
     backgroundColor: "white",
-    padding: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
     borderRadius: 12,
     flexDirection: "column",
-    gap: 16,
+    gap: 4,
     margin: 16,
     justifyContent: "center",
     shadowColor: "#000",
@@ -223,7 +232,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 24,
     minHeight: 100,
-    minWidth: 100,
+    minWidth: 145,
   },
   imageContainer: {
     alignItems: "center",
@@ -238,12 +247,15 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   productName: {
-    fontSize: 18,
-    fontWeight: "600",
+    flexWrap: "wrap",
+    fontSize: 16,
+    fontWeight: "bold",
     color: "#3C2F2F",
     fontFamily: "roboto",
   },
   productTitle: {
+    flexWrap: "wrap",
+    flexShrink: 1,
     fontSize: 14,
     color: "#3C2F2F",
     fontFamily: "roboto",

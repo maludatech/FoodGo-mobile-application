@@ -30,20 +30,20 @@ export const ProductList = [
     imageUrl:
       "https://res.cloudinary.com/dlnvweuhv/image/upload/v1731679185/chickenBurger_bmzmxj.png",
     name: "Hamburger",
-    title: "Chicken Burger",
-    nameTitle: "Hamburger Chicken Burger",
+    title: "Beef Burger",
+    nameTitle: "Hamburger Beef Burger",
     rating: "4.6",
     description:
-      "Our chicken burger is a delicious and healthier alternative to traditional beef burgers, perfect for those looking for a lighter meal option. Try it today and experience the mouth-watering flavors of our Hamburger Chicken Burger!",
+      "Our beef burger is a delicious and healthier alternative to traditional beef burgers, perfect for those looking for a lighter meal option. Try it today and experience the mouth-watering flavors of our Beef Chicken Burger!",
     min: 42,
     price: 12.48,
   },
   {
     id: 4,
     imageUrl:
-      "https://res.cloudinary.com/dlnvweuhv/image/upload/v1731679188/friedChickenBurger_yxmblr.png",
+      "https://res.cloudinary.com/dlnvweuhv/image/upload/v1731968306/friedChickenBurger_po0lki.png",
     name: "Hamburger",
-    title: "Fried Chicken Burger",
+    title: "Chicken Burger",
     nameTitle: "Hamburger Chicken Burger",
     rating: "4.5",
     description:

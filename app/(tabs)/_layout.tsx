@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Tabs } from "expo-router";
+import { Tabs, router } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
 
 interface Icons {
@@ -50,15 +50,20 @@ const TabLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="addItem" // This will represent the "+" button in the center
+          name="addItem"
           options={{
+            headerShown: false,
             tabBarButton: () => (
-              <TouchableOpacity style={styles.addButton}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => router.push("/addItem")}
+              >
                 <Icon name="plus" size={28} color="#fff" />
               </TouchableOpacity>
             ),
           }}
         />
+
         <Tabs.Screen
           name="customerSupport"
           options={{
@@ -90,17 +95,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   iconText: {
+    position: "absolute",
+    bottom: -10,
     fontSize: 18,
     fontWeight: "bold",
   },
+
   tabBarStyle: {
     backgroundColor: "#EF2A39",
     height: 64,
-    position: "relative", // Ensures proper stacking of the add button
+    position: "relative",
   },
   addButton: {
     position: "absolute",
-    bottom: 20, // Adjusts how much it floats above the tab bar
+    bottom: 20,
     width: 64,
     height: 64,
     borderRadius: 32,

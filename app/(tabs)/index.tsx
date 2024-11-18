@@ -12,9 +12,18 @@ import {
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { router } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
+import { useEffect } from "react";
 import { ProductList } from "@/components/ProductList";
 
 export default function HomeScreen() {
+  const { user } = useUser();
+
+  useEffect(() => {
+    !user && router.push("/sign-in");
+  }, [user]);
+
   const slide = ["All", "Sliders", "Combo", "Classic"];
   return (
     <SafeAreaView style={styles.container}>
@@ -186,7 +195,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   slideList: {
-    paddingLeft: 5,
+    paddingLeft: 14,
     paddingTop: 20,
   },
   slideItem: {

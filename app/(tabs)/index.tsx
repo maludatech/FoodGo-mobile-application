@@ -14,12 +14,14 @@ import Icon from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { router, Redirect } from "expo-router";
 import { useUser, useAuth } from "@clerk/clerk-expo";
-import { useEffect } from "react";
 import { ProductList } from "@/components/ProductList";
 
 export default function HomeScreen() {
   const { user } = useUser();
   const { isSignedIn } = useAuth();
+
+  console.log("User details", user);
+  console.log("user imageUrl", user?.imageUrl);
 
   if (!isSignedIn) {
     return <Redirect href={"/(auth)/sign-in"} />;
@@ -36,7 +38,14 @@ export default function HomeScreen() {
               <Text style={styles.title}>Foodgo</Text>
               <Text style={styles.subtitle}>Order your favourite food!</Text>
             </View>
-            <Image source={require("../../assets/images/userIcon.png")} />
+            <Image
+              source={{ uri: user?.imageUrl }}
+              style={{
+                width: 100,
+                height: 100,
+                borderRadius: 16, // Circular image
+              }}
+            />
           </View>
           <View style={styles.searchContainer}>
             <View style={styles.searchBox}>

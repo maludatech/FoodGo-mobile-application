@@ -12,17 +12,18 @@ import {
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { router } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
+import { router, Redirect } from "expo-router";
+import { useUser, useAuth } from "@clerk/clerk-expo";
 import { useEffect } from "react";
 import { ProductList } from "@/components/ProductList";
 
 export default function HomeScreen() {
   const { user } = useUser();
+  const { isSignedIn } = useAuth();
 
-  useEffect(() => {
-    !user && router.push("/sign-in");
-  }, [user]);
+  if (!isSignedIn) {
+    return <Redirect href={"/(auth)/sign-in"} />;
+  }
 
   const slide = ["All", "Sliders", "Combo", "Classic"];
   return (

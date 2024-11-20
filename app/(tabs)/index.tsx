@@ -20,9 +20,6 @@ export default function HomeScreen() {
   const { user } = useUser();
   const { isSignedIn } = useAuth();
 
-  console.log("User details", user);
-  console.log("user imageUrl", user?.imageUrl);
-
   if (!isSignedIn) {
     return <Redirect href={"/(auth)/sign-in"} />;
   }
@@ -142,13 +139,13 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "column",
     gap: 8,
-    paddingTop: 10,
+    paddingTop: "4%",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: "4%",
   },
   headerTextContainer: {
     flexDirection: "column",
@@ -170,7 +167,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 8,
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: "4%",
   },
   searchBox: {
     position: "relative",
@@ -206,11 +203,11 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   slideList: {
-    paddingLeft: 14,
-    paddingTop: 20,
+    paddingHorizontal: "4%",
+    paddingTop: "5%",
   },
   slideItem: {
-    marginLeft: 8,
+    marginLeft: "2%",
   },
   slideButton: {
     paddingVertical: 8,
@@ -235,7 +232,7 @@ const styles = StyleSheet.create({
     color: "#6A6A6A",
   },
   productList: {
-    paddingHorizontal: 5,
+    paddingHorizontal: "4%",
   },
   productContainer: {
     backgroundColor: "white",

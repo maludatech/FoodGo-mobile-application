@@ -40,9 +40,9 @@ const TabLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="userProfile"
+          name="Profile"
           options={{
-            title: "User-profile",
+            title: "Profile",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon icon="user" color={color} focused={focused} />
@@ -50,13 +50,13 @@ const TabLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="addItem"
+          name="AddItem"
           options={{
             headerShown: false,
             tabBarButton: () => (
               <TouchableOpacity
                 style={styles.addButton}
-                onPress={() => router.push("/addItem")}
+                onPress={() => router.push("/AddItem")}
               >
                 <Icon name="plus" size={28} color="#fff" />
               </TouchableOpacity>
@@ -65,9 +65,9 @@ const TabLayout = () => {
         />
 
         <Tabs.Screen
-          name="customerSupport"
+          name="Support"
           options={{
-            title: "Customer-support",
+            title: "support",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon icon="message-circle" color={color} focused={focused} />
@@ -75,7 +75,7 @@ const TabLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="cart"
+          name="Cart"
           options={{
             title: "Cart",
             headerShown: false,

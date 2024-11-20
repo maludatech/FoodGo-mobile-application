@@ -16,7 +16,7 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 
-const userProfile = () => {
+const Profile = () => {
   const { user } = useUser();
   return (
     <SafeAreaView style={styles.container}>
@@ -112,7 +112,7 @@ const userProfile = () => {
   );
 };
 
-export default userProfile;
+export default Profile;
 
 const styles = StyleSheet.create({
   container: {

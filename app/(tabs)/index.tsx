@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Feather";
@@ -23,6 +24,10 @@ export default function HomeScreen() {
   if (!isSignedIn) {
     return <Redirect href={"/(auth)/sign-in"} />;
   }
+
+  const { width: screenWidth } = Dimensions.get("window");
+  const desiredColumnWidth = 150;
+  const numColumns = Math.floor(screenWidth / desiredColumnWidth);
 
   const slide = ["All", "Sliders", "Combo", "Classic"];
   return (
@@ -93,7 +98,7 @@ export default function HomeScreen() {
           <FlatList
             data={ProductList}
             nestedScrollEnabled={true}
-            numColumns={2} // Grid with 2 columns
+            numColumns={numColumns}
             keyExtractor={(item) => item.id.toString()}
             style={styles.productList}
             renderItem={({ item }) => (
@@ -232,24 +237,25 @@ const styles = StyleSheet.create({
     color: "#6A6A6A",
   },
   productList: {
-    paddingHorizontal: "4%",
+    paddingHorizontal: "2%",
+    paddingBottom: "5%",
   },
   productContainer: {
     backgroundColor: "white",
-    paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingHorizontal: "4%",
+    paddingVertical: "5%",
     borderRadius: 12,
     flexDirection: "column",
     gap: 4,
-    margin: 16,
+    margin: "4%",
     justifyContent: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 24,
-    minHeight: 100,
-    minWidth: 145,
+    minHeight: "2%",
+    minWidth: "42%",
   },
   imageContainer: {
     alignItems: "center",

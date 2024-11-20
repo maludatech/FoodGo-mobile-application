@@ -86,6 +86,7 @@ const Profile = () => {
               </View>
             </View>
             <View style={styles.moreInfoContainer}>
+              <View style={styles.borderTop}></View>
               <TouchableOpacity style={styles.moreInfoContent}>
                 <Text style={styles.moreInfoText}>Payment Details</Text>
                 <Icon name="arrow-right" size={16} color={"#6B7280"} />
@@ -127,15 +128,15 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
     zIndex: 10,
-    height: 150,
+    height: "15%",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     zIndex: 20,
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingHorizontal: "4%",
+    paddingTop: "2%",
   },
   backgroundImage: {
     position: "absolute",
@@ -158,12 +159,13 @@ const styles = StyleSheet.create({
   secondContainer: {
     borderTopRightRadius: 48,
     borderTopLeftRadius: 48,
-    padding: 10,
+    padding: "4%",
     backgroundColor: "#fff",
-    height: "100%",
+    minHeight: "100%",
     flexDirection: "column",
     gap: 32,
     position: "relative",
+    paddingBottom: "5%",
   },
   imageContainer: {
     alignItems: "center",
@@ -180,10 +182,10 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#6B7280",
     marginLeft: 8,
-    fontWeight: "500",
+    fontWeight: "medium",
     fontFamily: "roboto",
   },
   input: {
@@ -193,10 +195,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     color: "#3C2F2F",
-    fontWeight: "bold",
+    fontWeight: "semibold",
     fontFamily: "roboto",
-    fontSize: 16,
-    backgroundColor: "#F9FAFB",
+    fontSize: 18,
+    backgroundColor: "#FFF",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -206,8 +208,11 @@ const styles = StyleSheet.create({
   moreInfoContainer: {
     flexDirection: "column",
     gap: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    padding: 8,
+  },
+  borderTop: {
+    borderWidth: 1,
+    borderTopColor: "#E8E8E8",
   },
   moreInfoContent: {
     flexDirection: "row",
@@ -218,7 +223,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#6B7280",
     fontFamily: "roboto",
-    fontWeight: "semibold",
+    fontWeight: "medium",
   },
   buttonContainer: {
     flexDirection: "row",

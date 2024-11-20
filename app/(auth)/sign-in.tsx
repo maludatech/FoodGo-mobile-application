@@ -57,14 +57,14 @@ const SignIn = () => {
             />
             <View style={styles.overlay}>
               <View style={styles.header}>
-                <Icon name="arrow-left" color={"#fff"} size={20} solid />
                 <Icon
-                  name="cog"
+                  name="arrow-left"
                   color={"#fff"}
                   size={20}
                   solid
                   onPress={() => router.back()}
                 />
+                <Icon name="cog" color={"#fff"} size={20} solid />
               </View>
             </View>
           </View>

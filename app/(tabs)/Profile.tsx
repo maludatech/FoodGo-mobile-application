@@ -7,17 +7,35 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
+import { router, Redirect } from "expo-router";
+import { useUser, useAuth } from "@clerk/clerk-expo";
 
 const Profile = () => {
   const { user } = useUser();
+  const { signOut, isSignedIn } = useAuth();
+
+  if (!isSignedIn) {
+    return <Redirect href={"/(auth)/sign-in"} />;
+  }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      Alert.alert(
+        "Sign Out Error",
+        "There was an error signing out. Please try again."
+      );
+      console.error("Sign Out Error:", error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#EF2A39" />
@@ -37,14 +55,18 @@ const Profile = () => {
             />
             <View style={styles.overlay}>
               <View style={styles.header}>
-                <FontAwesome5Icon
+                <Icon
                   name="arrow-left"
                   color={"#fff"}
                   size={20}
-                  solid
                   onPress={() => router.back()}
                 />
-                <FontAwesome5Icon name="cog" color={"#fff"} size={20} solid />
+                <Icon
+                  name="log-out"
+                  color={"#fff"}
+                  size={20}
+                  onPress={handleSignOut}
+                />
               </View>
             </View>
           </View>
@@ -101,7 +123,10 @@ const Profile = () => {
                 <Text style={styles.editButtonText}>Edit Profile</Text>
                 <Icon name="edit" size={18} color={"#fff"} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.logOutButton}>
+              <TouchableOpacity
+                style={styles.logOutButton}
+                onPress={handleSignOut}
+              >
                 <Text style={styles.logOutButtonText}>Log out</Text>
                 <Icon name="log-out" size={18} color={"#EF2A39"} />
               </TouchableOpacity>
@@ -121,6 +146,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF2A39",
   },
   innerContainer: {
+    flex: 1,
     flexDirection: "column",
   },
   firstContainer: {
@@ -161,11 +187,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 48,
     padding: "4%",
     backgroundColor: "#fff",
-    minHeight: "100%",
+    // minHeight: "100%",
     flexDirection: "column",
     gap: 32,
     position: "relative",
     paddingBottom: "5%",
+    zIndex: 40,
   },
   imageContainer: {
     alignItems: "center",
@@ -211,9 +238,10 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   borderTop: {
-    borderWidth: 1,
-    borderTopColor: "#E8E8E8",
+    borderTopWidth: 1,
+    borderTopColor: "#d1d5db",
   },
+
   moreInfoContent: {
     flexDirection: "row",
     justifyContent: "space-between",

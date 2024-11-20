@@ -9,11 +9,18 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { useOAuth } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
+import { Redirect, router } from "expo-router";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { useOAuth, useAuth } from "@clerk/clerk-expo";
 
 const SignIn = () => {
+  const { isSignedIn } = useAuth();
+
+  if (isSignedIn) {
+    return <Redirect href={"/(tabs)"} />;
+  }
+
   const GoogleIcon = () => <Icon name="google" size={24} color="#fff" />;
 
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
@@ -23,7 +30,7 @@ const SignIn = () => {
       const { createdSessionId, setActive } = await startOAuthFlow({
         redirectUrl: Linking.createURL("/(tabs)/", { scheme: "myapp" }),
       });
-      if (createdSessionId) {
+      if (createdSessionId && setActive) {
         setActive({ session: createdSessionId });
       }
     } catch (error) {
@@ -51,7 +58,13 @@ const SignIn = () => {
             <View style={styles.overlay}>
               <View style={styles.header}>
                 <Icon name="arrow-left" color={"#fff"} size={20} solid />
-                <Icon name="cog" color={"#fff"} size={20} solid />
+                <Icon
+                  name="cog"
+                  color={"#fff"}
+                  size={20}
+                  solid
+                  onPress={() => router.back()}
+                />
               </View>
             </View>
           </View>

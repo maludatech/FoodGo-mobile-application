@@ -41,9 +41,9 @@ export default function HomeScreen() {
             <Image
               source={{ uri: user?.imageUrl }}
               style={{
-                width: 100,
-                height: 100,
-                borderRadius: 16, // Circular image
+                width: 70,
+                height: 70,
+                borderRadius: 16,
               }}
             />
           </View>
@@ -69,6 +69,7 @@ export default function HomeScreen() {
             data={slide}
             keyExtractor={(item, index) => index.toString()}
             horizontal={true}
+            showsHorizontalScrollIndicator={false}
             style={styles.slideList}
             renderItem={({ item, index }) => (
               <View style={styles.slideItem}>

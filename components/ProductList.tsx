@@ -41,7 +41,7 @@ export const ProductList = [
   {
     id: 4,
     imageUrl:
-      "https://res.cloudinary.com/dlnvweuhv/image/upload/v1731968306/friedChickenBurger_po0lki.png",
+      "https://res.cloudinary.com/dlnvweuhv/image/upload/v1732302448/friedChickenBurger_q9ojpu.png",
     name: "Hamburger",
     title: "Chicken Burger",
     nameTitle: "Hamburger Chicken Burger",

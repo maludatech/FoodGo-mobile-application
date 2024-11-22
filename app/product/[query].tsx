@@ -1,11 +1,13 @@
 import { View, Text, ScrollView, StyleSheet, Image } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Feather";
-import { ProductList } from "@/components/ProductList";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
+import { TouchableOpacity } from "react-native";
+import Slider from "@react-native-community/slider";
+import { ProductList } from "@/components/ProductList";
 
 const Query = () => {
   const query = useLocalSearchParams();
@@ -24,6 +26,9 @@ const Query = () => {
   const filteredProduct = ProductList.filter((product) =>
     parsedIds.includes(product.id)
   );
+
+  const [quantity, setQuantity] = useState<number>(0);
+  const [spicyLevel, setSpicyLevel] = useState(0);
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -60,7 +65,53 @@ const Query = () => {
                   {product.description}
                 </Text>
                 <View style={styles.orderSpecificationContainer}>
-                  <View style={styles.orderSpecificationControl}></View>
+                  <View style={styles.orderSpecificationControl}>
+                    <View style={styles.spicyContainer}>
+                      <Text style={styles.specificationText}>Spicy</Text>
+                      <View style={styles.sliderContainer}>
+                        <Text style={styles.mildLabel}>Mild</Text>
+                        <Slider
+                          style={styles.slider}
+                          minimumValue={0}
+                          maximumValue={100}
+                          value={spicyLevel}
+                          onValueChange={(value) => setSpicyLevel(value)}
+                          minimumTrackTintColor="#EF2A39"
+                          maximumTrackTintColor="#EDEDED"
+                          thumbTintColor="#EF2A39"
+                        />
+                        <Text style={styles.hotLabel}>Hot</Text>
+                      </View>
+                    </View>
+                    <View style={styles.quantityControlContainer}>
+                      <Text style={styles.specificationText}>Portion</Text>
+                      <View style={styles.quantityControlContent}>
+                        <TouchableOpacity
+                          style={styles.quantityControlButtons}
+                          onPress={() =>
+                            setQuantity((prevQuantity) =>
+                              Math.max(0, prevQuantity - 1)
+                            )
+                          }
+                        >
+                          <Text style={styles.quantityControlButtonsText}>
+                            -
+                          </Text>
+                        </TouchableOpacity>
+                        <Text style={styles.quantity}>{quantity}</Text>
+                        <TouchableOpacity
+                          style={styles.quantityControlButtons}
+                          onPress={() =>
+                            setQuantity((prevQuantity) => prevQuantity + 1)
+                          }
+                        >
+                          <Text style={styles.quantityControlButtonsText}>
+                            +
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
                 </View>
               </View>
             ))
@@ -84,8 +135,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flexDirection: "column",
-    paddingVertical: "4%",
-    paddingHorizontal: "2%",
+    padding: "2%",
   },
   headerContainer: {
     flexDirection: "row",
@@ -131,11 +181,76 @@ const styles = StyleSheet.create({
   },
   orderSpecificationContainer: {
     flexDirection: "column",
+    gap: 12,
     paddingTop: "4%",
   },
   orderSpecificationControl: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  spicyContainer: {
+    flexDirection: "column",
+    gap: 8,
+  },
+  specificationText: {
+    color: "#3C2F2F",
+    fontSize: 14,
+    fontWeight: "700",
+    fontFamily: "roboto",
+  },
+  sliderContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "70%",
+  },
+  slider: {
+    flex: 1,
+    marginHorizontal: "2%",
+  },
+  mildLabel: {
+    color: "#1CC019",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  hotLabel: {
+    color: "#EF2A39",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  quantityControlContainer: {
+    flexDirection: "column",
+    gap: 8,
+  },
+  quantityControlContent: {
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+  },
+  quantityControlButtons: {
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    backgroundColor: "#EF2A39",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    shadowColor: "#EF2A39",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 16,
+  },
+  quantityControlButtonsText: {
+    color: "#fff",
+    fontFamily: "roboto",
+    fontWeight: "bold",
+    fontSize: 24,
+  },
+  quantity: {
+    fontFamily: "inter",
+    color: "#3C2F2F",
+    fontWeight: "bold",
+    fontSize: 18,
   },
   noProductsText: {
     fontFamily: "roboto",

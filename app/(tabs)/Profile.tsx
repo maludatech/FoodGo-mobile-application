@@ -38,7 +38,7 @@ const Profile = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#EF2A39" />
+      <StatusBar backgroundColor="#EF2A39" style="light" />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.innerContainer}>
           <View style={styles.firstContainer}>
@@ -187,22 +187,27 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 48,
     padding: "4%",
     backgroundColor: "#fff",
-    // minHeight: "100%",
+    minHeight: "100%",
     flexDirection: "column",
     gap: 32,
     position: "relative",
-    paddingBottom: "5%",
+    paddingBottom: "40%",
     zIndex: 40,
   },
   imageContainer: {
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#EF2A39",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 24,
   },
   formContainer: {
     flexDirection: "column",
     gap: 20,
-    paddingHorizontal: 4,
-    paddingTop: 48,
+    paddingHorizontal: "4%",
+    paddingTop: "10%",
   },
   formContents: {
     flexDirection: "column",
@@ -235,7 +240,8 @@ const styles = StyleSheet.create({
   moreInfoContainer: {
     flexDirection: "column",
     gap: 16,
-    padding: 8,
+    paddingBottom: "2%",
+    paddingHorizontal: "6%",
   },
   borderTop: {
     borderTopWidth: 1,
@@ -255,20 +261,24 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    gap: 8,
+    gap: 16,
     width: "100%",
-    paddingBottom: 10,
     paddingHorizontal: 8,
   },
   editButton: {
     backgroundColor: "#3C2F2F",
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     gap: 4,
-    width: "50%",
+    width: "48%",
+    shadowColor: "#EF2A39",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 24,
   },
   editButtonText: {
     color: "#fff",
@@ -277,7 +287,7 @@ const styles = StyleSheet.create({
   },
   logOutButton: {
     backgroundColor: "#fff",
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: "#EF2A39",
@@ -285,7 +295,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 4,
-    width: "50%",
+    width: "48%",
+    shadowColor: "#EF2A39",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 24,
   },
   logOutButtonText: {
     color: "#EF2A39",

@@ -16,6 +16,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { router, Redirect } from "expo-router";
 import { useUser, useAuth } from "@clerk/clerk-expo";
 import { ProductList } from "@/components/ProductList";
+import { useEffect } from "react";
 
 export default function HomeScreen() {
   const { user } = useUser();
@@ -24,6 +25,43 @@ export default function HomeScreen() {
   if (!isSignedIn) {
     return <Redirect href={"/(auth)/sign-in"} />;
   }
+
+  useEffect(() => {
+    const sendUserDataToBackend = async () => {
+      try {
+        if (user) {
+          const fullName = `${user.firstName} ${user.lastName}`;
+          const email = user.emailAddresses[0]?.emailAddress;
+          const imageUrl = user.imageUrl;
+
+          // Send user data to the backend
+          const response = await fetch(
+            "https://food-go-backend.vercel.app/api/auth/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ fullName, email, imageUrl }),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to send user details to the backend");
+          }
+
+          const responseData = await response.json();
+          console.log("User data sent successfully", responseData);
+        } else {
+          console.error("User object is undefined");
+        }
+      } catch (error) {
+        console.error("Error sending user data:", error);
+      }
+    };
+
+    sendUserDataToBackend();
+  }, [user]);
 
   const { width: screenWidth } = Dimensions.get("window");
   const desiredColumnWidth = 150;
@@ -102,7 +140,10 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id.toString()}
             style={styles.productList}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.productContainer}>
+              <TouchableOpacity
+                style={styles.productContainer}
+                onPress={() => router.push(`/product/${item.id}`)}
+              >
                 <View style={styles.imageContainer}>
                   <Image
                     source={{ uri: item.imageUrl }}

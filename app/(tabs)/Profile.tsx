@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router, Redirect } from "expo-router";
@@ -21,8 +21,60 @@ const Profile = () => {
   const { signOut, isSignedIn } = useAuth();
 
   if (!isSignedIn) {
-    return <Redirect href={"/(auth)/sign-in"} />;
+    router.push("/(auth)/sign-in");
+    return null;
   }
+
+  const email = user?.emailAddresses[0].emailAddress;
+  const [deliveryAddress, setDeliveryAddress] = useState<string>("");
+
+  const fetchUserDetails = async () => {
+    try {
+      const response = await fetch(
+        `https://food-go-backend.vercel.app/api/user/profile/${email}`
+      );
+      if (response.ok) {
+        const result = await response.json();
+        setDeliveryAddress(result.deliveryAddress);
+      }
+    } catch (error) {
+      console.error("Fetch User details error: ", error);
+    }
+  };
+
+  const updateUserDetails = async () => {
+    if (!deliveryAddress.trim()) {
+      // Validate that deliveryAddress is not empty
+      Alert.alert(
+        "Validation Error",
+        "Delivery address cannot be empty. Please provide a valid address."
+      );
+      return; // Stop further execution if validation fails
+    }
+    try {
+      const response = await fetch(
+        `https://food-go-backend.vercel.app/api/user/profile/${email}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ deliveryAddress }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      if (response.ok) {
+        Alert.alert("Profile updated successfully!!");
+      }
+    } catch (error) {
+      console.error("Fetch User details error: ", error);
+      Alert.alert(
+        "Error updating profile",
+        "There was an error updating your profile. Please try again."
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (email) fetchUserDetails();
+  }, [email]);
 
   const handleSignOut = async () => {
     try {
@@ -104,7 +156,11 @@ const Profile = () => {
               </View>
               <View style={styles.formContents}>
                 <Text style={styles.label}>Delivery Address</Text>
-                <TextInput style={styles.input} />
+                <TextInput
+                  style={styles.input}
+                  value={deliveryAddress}
+                  onChangeText={(text) => setDeliveryAddress(text)}
+                />
               </View>
             </View>
             <View style={styles.moreInfoContainer}>
@@ -119,7 +175,10 @@ const Profile = () => {
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.editButton}>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={updateUserDetails}
+              >
                 <Text style={styles.editButtonText}>Edit Profile</Text>
                 <Icon name="edit" size={18} color={"#fff"} />
               </TouchableOpacity>

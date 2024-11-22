@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import React, { useEffect, useState } from "react";
@@ -21,12 +22,12 @@ const Profile = () => {
   const { signOut, isSignedIn } = useAuth();
 
   if (!isSignedIn) {
-    router.push("/(auth)/sign-in");
-    return null;
+    return <Redirect href={"/(auth)/sign-in"} />;
   }
 
   const email = user?.emailAddresses[0].emailAddress;
   const [deliveryAddress, setDeliveryAddress] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchUserDetails = async () => {
     try {
@@ -52,6 +53,7 @@ const Profile = () => {
       return; // Stop further execution if validation fails
     }
     try {
+      setIsLoading(true);
       const response = await fetch(
         `https://food-go-backend.vercel.app/api/user/profile/${email}`,
         {
@@ -69,6 +71,8 @@ const Profile = () => {
         "Error updating profile",
         "There was an error updating your profile. Please try again."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -176,12 +180,20 @@ const Profile = () => {
             </View>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={styles.editButton}
-                onPress={updateUserDetails}
+                style={[styles.editButton, isLoading && { opacity: 0.6 }]}
+                onPress={() => updateUserDetails()}
+                disabled={isLoading}
               >
-                <Text style={styles.editButtonText}>Edit Profile</Text>
-                <Icon name="edit" size={18} color={"#fff"} />
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <>
+                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                    <Icon name="edit" size={18} color={"#fff"} />
+                  </>
+                )}
               </TouchableOpacity>
+
               <TouchableOpacity
                 style={styles.logOutButton}
                 onPress={handleSignOut}

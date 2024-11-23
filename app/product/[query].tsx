@@ -27,13 +27,13 @@ const Query = () => {
     parsedIds.includes(product.id)
   );
 
-  const [quantity, setQuantity] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(1);
   const [spicyLevel, setSpicyLevel] = useState(0);
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar backgroundColor="#FFF" style="dark" />
-      <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.innerContainer}>
           <View style={styles.headerContainer}>
             <Icon
@@ -77,7 +77,7 @@ const Query = () => {
                           value={spicyLevel}
                           onValueChange={(value) => setSpicyLevel(value)}
                           minimumTrackTintColor="#EF2A39"
-                          maximumTrackTintColor="#EDEDED"
+                          maximumTrackTintColor="#6A6A6A"
                           thumbTintColor="#EF2A39"
                         />
                         <Text style={styles.hotLabel}>Hot</Text>
@@ -90,7 +90,7 @@ const Query = () => {
                           style={styles.quantityControlButtons}
                           onPress={() =>
                             setQuantity((prevQuantity) =>
-                              Math.max(0, prevQuantity - 1)
+                              Math.max(1, prevQuantity - 1)
                             )
                           }
                         >
@@ -111,6 +111,18 @@ const Query = () => {
                         </TouchableOpacity>
                       </View>
                     </View>
+                  </View>
+                </View>
+                <View style={styles.orderContainer}>
+                  <View style={styles.orderContainerContent}>
+                    <TouchableOpacity style={styles.totalButton}>
+                      <Text style={styles.ButtonText}>
+                        ${quantity * product.price}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.orderButton}>
+                      <Text style={styles.ButtonText}>ORDER NOW</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
@@ -135,22 +147,19 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flexDirection: "column",
-    padding: "2%",
+    flex: 1,
+    padding: "4%",
   },
   headerContainer: {
     flexDirection: "row",
   },
-
   productCard: {
     flexDirection: "column",
-    gap: 8,
+    gap: 10,
   },
   imageContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
     width: "100%",
-    height: "50%",
+    aspectRatio: 1.2,
   },
   image: {
     width: "100%",
@@ -170,11 +179,11 @@ const styles = StyleSheet.create({
   rating: {
     color: "#808080",
     fontSize: 15,
-    fontWeight: "medium",
+    fontWeight: "600",
     fontFamily: "roboto",
   },
   productDescription: {
-    fontSize: 16,
+    fontSize: 17,
     color: "#6A6A6A",
     fontFamily: "roboto",
     paddingTop: "3%",
@@ -190,23 +199,24 @@ const styles = StyleSheet.create({
   },
   spicyContainer: {
     flexDirection: "column",
-    gap: 8,
+    gap: 2,
   },
   specificationText: {
     color: "#3C2F2F",
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "medium",
     fontFamily: "roboto",
   },
   sliderContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width: "70%",
+    width: "65%",
   },
   slider: {
     flex: 1,
-    marginHorizontal: "2%",
+    marginHorizontal: "0.5%",
+    height: 40,
   },
   mildLabel: {
     color: "#1CC019",
@@ -251,6 +261,34 @@ const styles = StyleSheet.create({
     color: "#3C2F2F",
     fontWeight: "bold",
     fontSize: 18,
+  },
+  orderContainer: {
+    flexDirection: "column",
+    paddingTop: "7%",
+  },
+  orderContainerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 4,
+  },
+  totalButton: {
+    backgroundColor: "#EF2A39",
+    padding: 16,
+    borderRadius: 12,
+  },
+  orderButton: {
+    backgroundColor: "#3C2F2F",
+    width: "70%",
+    padding: 16,
+    borderRadius: 12,
+  },
+  ButtonText: {
+    fontFamily: "roboto",
+    fontSize: 18,
+    fontWeight: "semibold",
+    color: "#FFF",
+    textAlign: "center",
   },
   noProductsText: {
     fontFamily: "roboto",

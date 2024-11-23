@@ -42,6 +42,12 @@ const Query = () => {
               color={"#3C2F2F"}
               onPress={() => router.back()}
             />
+            <Icon
+              name="search"
+              size={24}
+              color={"#3C2F2F"}
+              onPress={() => router.back()}
+            />
           </View>
           {filteredProduct.length > 0 ? (
             filteredProduct.map((product) => (
@@ -152,6 +158,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: "row",
+    justifyContent: "space-between",
   },
   productCard: {
     flexDirection: "column",

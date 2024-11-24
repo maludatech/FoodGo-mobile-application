@@ -131,8 +131,8 @@ const Profile = () => {
               <Image
                 source={{ uri: user?.imageUrl }}
                 style={{
-                  width: 120,
-                  height: 120,
+                  width: 100,
+                  height: 100,
                   borderRadius: 16,
                   borderWidth: 4,
                   borderColor: "#EF2A39",
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#6B7280",
     marginLeft: 8,
     fontWeight: "medium",
@@ -298,9 +298,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     color: "#3C2F2F",
-    fontWeight: "semibold",
+    fontWeight: "700",
     fontFamily: "roboto",
-    fontSize: 18,
+    fontSize: 14,
     backgroundColor: "#FFF",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   moreInfoText: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#6B7280",
     fontFamily: "roboto",
     fontWeight: "medium",
@@ -338,8 +338,8 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: "#3C2F2F",
-    padding: 14,
-    borderRadius: 12,
+    padding: 12,
+    borderRadius: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -358,8 +358,8 @@ const styles = StyleSheet.create({
   },
   logOutButton: {
     backgroundColor: "#fff",
-    padding: 14,
-    borderRadius: 12,
+    padding: 12,
+    borderRadius: 16,
     borderWidth: 2,
     borderColor: "#EF2A39",
     flexDirection: "row",

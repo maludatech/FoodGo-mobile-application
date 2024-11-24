@@ -103,6 +103,7 @@ const AddItem = () => {
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
                   keyExtractor={(item) => item.id.toString()}
+                  contentContainerStyle={{ paddingRight: "10%" }}
                   renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
                       <View style={styles.itemImageContainer}>
@@ -149,6 +150,17 @@ const AddItem = () => {
                 />
               </View>
             </View>
+            <View style={styles.orderContainer}>
+              <View style={styles.totalContainer}>
+                <Text style={styles.totalContainerHeading}>Total</Text>
+                <Text style={styles.totalContainerText}></Text>
+              </View>
+              <View style={styles.orderButtonContainer}>
+                <TouchableOpacity style={styles.orderButton}>
+                  <Text style={styles.orderButtonText}>Pay Now</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -166,7 +178,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "column",
     flex: 1,
-    paddingTop: "4%",
+    paddingVertical: "4%",
   },
   headerContainer: {
     flexDirection: "row",
@@ -176,19 +188,18 @@ const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "column",
     gap: 6,
-    paddingHorizontal: "4%",
   },
   mainContent: {
-    // flexDirection: width < 600 ? "column" : "row",
-    // gap: width < 600 ? 10 : 16,
     flexDirection: "row",
     gap: 10,
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: "4%",
   },
   imageContainer: {
-    width: "50%",
+    width: "60%",
     aspectRatio: 1,
+    alignSelf: "flex-start",
   },
   image: {
     width: "100%",
@@ -197,11 +208,11 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     flexDirection: "column",
     gap: "4%",
-    width: "50%",
+    width: "38%",
   },
   description: {
     fontFamily: "roboto",
-    fontSize: PixelRatio.getFontScale() * 16,
+    fontSize: PixelRatio.getFontScale() * 12,
     color: "#3C2F2F",
   },
   customizeText: {
@@ -213,7 +224,7 @@ const styles = StyleSheet.create({
   },
   specificationText: {
     color: "#3C2F2F",
-    fontSize: PixelRatio.getFontScale() * 14,
+    fontSize: PixelRatio.getFontScale() * 13,
     fontWeight: "700",
     fontFamily: "roboto",
   },
@@ -230,12 +241,12 @@ const styles = StyleSheet.create({
   },
   mildLabel: {
     color: "#1CC019",
-    fontSize: 14,
+    fontSize: PixelRatio.getFontScale() * 12,
     fontWeight: "bold",
   },
   hotLabel: {
     color: "#EF2A39",
-    fontSize: PixelRatio.getFontScale() * 14,
+    fontSize: PixelRatio.getFontScale() * 12,
     fontWeight: "bold",
   },
   quantityControlContainer: {
@@ -250,8 +261,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   quantityControlButtons: {
-    paddingHorizontal: 16,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 3,
     backgroundColor: "#EF2A39",
     alignItems: "center",
     justifyContent: "center",
@@ -266,13 +277,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "roboto",
     fontWeight: "bold",
-    fontSize: PixelRatio.getFontScale() * 24,
+    fontSize: PixelRatio.getFontScale() * 20,
   },
   quantity: {
     fontFamily: "inter",
     color: "#3C2F2F",
     fontWeight: "bold",
-    fontSize: PixelRatio.getFontScale() * 18,
+    fontSize: PixelRatio.getFontScale() * 16,
   },
   flatListContainer: {
     flexDirection: "column",
@@ -282,6 +293,7 @@ const styles = StyleSheet.create({
   FlatList1content: {
     flexDirection: "column",
     gap: "2%",
+    paddingLeft: "4%",
   },
   FlatList2content: {
     flexDirection: "column",
@@ -290,43 +302,43 @@ const styles = StyleSheet.create({
   },
   flatListHeading: {
     fontFamily: "roboto",
-    fontWeight: "semibold",
-    fontSize: PixelRatio.getFontScale() * 18,
+    fontWeight: "700",
+    fontSize: PixelRatio.getFontScale() * 16,
     color: "#3C2F2F",
   },
   itemContainer: {
     flexDirection: "column",
-    padding: "2%",
+    backgroundColor: "#3C2F2F",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
     shadowColor: "#0000",
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 6,
     shadowOpacity: 0.5,
-    elevation: 16,
+    elevation: 24,
     zIndex: 10,
     marginLeft: "2%",
   },
   itemImageContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFF",
     alignItems: "center",
     justifyContent: "center",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   itemImage: {
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
     resizeMode: "contain",
   },
   itemDescription: {
-    backgroundColor: "#3C2F2F",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "5%",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    padding: "7%",
+    gap: "2%",
   },
   itemName: {
     color: "#ffffff",
@@ -336,14 +348,44 @@ const styles = StyleSheet.create({
   },
   itemQuantityContainer: {
     backgroundColor: "#EF2A39",
-    borderRadius: "50%",
-    width: 64,
-    height: 64,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   itemQuantityControl: {
     color: "#ffffff",
     fontWeight: "bold",
+  },
+  orderContainer: {
+    paddingHorizontal: "4%",
+    paddingTop: "5%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: "4%",
+  },
+  totalContainer: {
+    flexDirection: "column",
+    gap: "2%",
+  },
+  totalContainerHeading: {
+    color: "#3C2F2F",
+    fontFamily: "roboto",
+    fontWeight: "700",
+    fontSize: PixelRatio.getFontScale() * 17,
+  },
+  totalContainerText: {},
+  orderButtonContainer: {},
+  orderButton: {
+    backgroundColor: "#EF2A39",
+    padding: "2%",
+    borderRadius: 16,
+  },
+  orderButtonText: {
+    color: "#FFF",
+    fontFamily: "roboto",
+    fontWeight: "700",
+    fontSize: PixelRatio.getFontScale() * 17,
   },
 });

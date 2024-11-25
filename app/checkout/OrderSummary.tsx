@@ -15,6 +15,7 @@ const OrderSummary = () => {
     0
   );
   const deliveryFee = 1.5;
+  const tax = 0.3;
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -47,13 +48,32 @@ const OrderSummary = () => {
                 </View>
                 <View style={styles.orderDetails}>
                   <Text style={styles.orderDetailsText}>Taxes</Text>
-                  <Text style={styles.orderDetailsText}>$0.3</Text>
+                  <Text style={styles.orderDetailsText}>${tax}</Text>
                 </View>
                 <View style={styles.orderDetails}>
                   <Text style={styles.orderDetailsText}>Delivery fees</Text>
                   <Text style={styles.orderDetailsText}>{deliveryFee}</Text>
                 </View>
+                <View style={styles.borderTop}></View>
+                <View style={styles.TotalContainer}>
+                  <View style={styles.orderDetails}>
+                    <Text style={styles.total}>Total</Text>
+                    <Text style={styles.total}>
+                      {totalPrice.toFixed(2) + deliveryFee + tax}
+                    </Text>
+                  </View>
+                  <View style={styles.orderDetails}>
+                    <Text style={styles.deliveryTime}>
+                      Estimated delivery time
+                    </Text>
+                    <Text style={styles.deliveryTime}>15 - 30 mins</Text>
+                  </View>
+                </View>
               </View>
+            </View>
+            <View style={styles.paymentContainer}>
+              <Text style={styles.paymentHeading}>Payment methods</Text>
+              <View style={styles.paymentcards}></View>
             </View>
           </View>
         </View>
@@ -87,7 +107,7 @@ const styles = StyleSheet.create({
   },
   summary: {
     flexDirection: "column",
-    gap: "7%",
+    gap: "6%",
     paddingVertical: "6%",
   },
   summaryHeading: {
@@ -98,7 +118,8 @@ const styles = StyleSheet.create({
   },
   orderDetailsContainer: {
     flexDirection: "column",
-    gap: "4%",
+    gap: "6%",
+    paddingHorizontal: "6%",
   },
   orderDetails: {
     flexDirection: "row",
@@ -111,4 +132,37 @@ const styles = StyleSheet.create({
     fontSize: PixelRatio.getFontScale() * 16,
     color: "#7D7D7D",
   },
+  borderTop: {
+    borderTopWidth: 1,
+    borderTopColor: "#d1d5db",
+  },
+  TotalContainer: {
+    paddingTop: "4%",
+    flexDirection: "column",
+    gap: 16,
+  },
+  total: {
+    color: "#3C2F2F",
+    fontWeight: "semibold",
+    fontFamily: "roboto",
+    fontSize: PixelRatio.getFontScale() * 18,
+  },
+  deliveryTime: {
+    color: "#3C2F2F",
+    fontWeight: "semibold",
+    fontFamily: "roboto",
+    fontSize: PixelRatio.getFontScale() * 14,
+  },
+  paymentContainer: {
+    flexDirection: "column",
+    gap: "2%",
+    paddingHorizontal: "4%",
+  },
+  paymentHeading: {
+    fontSize: PixelRatio.getFontScale() * 20,
+    fontFamily: "poppins",
+    fontWeight: "semibold",
+    color: "#3C2F2F",
+  },
+  paymentCards: {},
 });

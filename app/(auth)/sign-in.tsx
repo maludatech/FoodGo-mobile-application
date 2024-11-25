@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
     zIndex: 10,
-    height: 150,
+    height: "25%",
   },
   header: {
     flexDirection: "row",

@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
     zIndex: 10,
-    height: "15%",
+    height: "20%",
   },
   header: {
     flexDirection: "row",

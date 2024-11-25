@@ -158,7 +158,7 @@ const AddItem = () => {
                 <Text style={styles.totalContainerHeading}>Total</Text>
                 <Text style={styles.totalContainerText}>
                   <Text style={styles.dollarSign}>$</Text>
-                  {total}
+                  {total * quantity}
                 </Text>
               </View>
               <View style={styles.orderButtonContainer}>
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
   totalContainerHeading: {
     color: "#3C2F2F",
     fontFamily: "roboto",
-    fontWeight: "700",
+    fontWeight: "600",
     fontSize: PixelRatio.getFontScale() * 17,
   },
   dollarSign: {
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     width: "50%",
   },
   orderButton: {
-    backgroundColor: "#3C2F2F",
+    backgroundColor: "#EF2A39",
     width: "100%",
     padding: 18,
     borderRadius: 14,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   orderButtonText: {
     color: "#FFF",
     fontFamily: "roboto",
-    fontWeight: "700",
+    fontWeight: "600",
     textAlign: "center",
     fontSize: PixelRatio.getFontScale() * 16,
   },

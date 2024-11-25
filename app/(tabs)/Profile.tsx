@@ -317,7 +317,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#d1d5db",
   },
-
   moreInfoContent: {
     flexDirection: "row",
     justifyContent: "space-between",

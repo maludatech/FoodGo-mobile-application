@@ -110,6 +110,7 @@ export default function HomeScreen() {
             keyExtractor={(item, index) => index.toString()}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingRight: "15%" }}
             style={styles.slideList}
             renderItem={({ item, index }) => (
               <View style={styles.slideItem}>
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   slideList: {
-    paddingHorizontal: "4%",
+    paddingLeft: "4%",
     paddingTop: "5%",
   },
   slideItem: {

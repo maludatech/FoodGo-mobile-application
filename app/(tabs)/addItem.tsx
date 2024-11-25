@@ -22,6 +22,8 @@ const { width, height } = Dimensions.get("window");
 const AddItem = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const [spicyLevel, setSpicyLevel] = useState(0);
+  const [total, setTotal] = useState<number>(16.36);
+
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar style="dark" />
@@ -103,7 +105,7 @@ const AddItem = () => {
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
                   keyExtractor={(item) => item.id.toString()}
-                  contentContainerStyle={{ paddingRight: "10%" }}
+                  contentContainerStyle={{ paddingRight: "40%" }}
                   renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
                       <View style={styles.itemImageContainer}>
@@ -129,6 +131,7 @@ const AddItem = () => {
                   data={SideOptions}
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ paddingRight: "40%" }}
                   keyExtractor={(item) => item.id.toString()}
                   renderItem={({ item }) => (
                     <View style={styles.itemContainer}>
@@ -153,11 +156,14 @@ const AddItem = () => {
             <View style={styles.orderContainer}>
               <View style={styles.totalContainer}>
                 <Text style={styles.totalContainerHeading}>Total</Text>
-                <Text style={styles.totalContainerText}></Text>
+                <Text style={styles.totalContainerText}>
+                  <Text style={styles.dollarSign}>$</Text>
+                  {total}
+                </Text>
               </View>
               <View style={styles.orderButtonContainer}>
                 <TouchableOpacity style={styles.orderButton}>
-                  <Text style={styles.orderButtonText}>Pay Now</Text>
+                  <Text style={styles.orderButtonText}>ORDER NOW</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -178,7 +184,8 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "column",
     flex: 1,
-    paddingVertical: "4%",
+    paddingTop: "4%",
+    paddingBottom: "35%",
   },
   headerContainer: {
     flexDirection: "row",
@@ -212,7 +219,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontFamily: "roboto",
-    fontSize: PixelRatio.getFontScale() * 12,
+    fontSize: PixelRatio.getFontScale() * 13,
+    fontWeight: "600",
     color: "#3C2F2F",
   },
   customizeText: {
@@ -224,7 +232,7 @@ const styles = StyleSheet.create({
   },
   specificationText: {
     color: "#3C2F2F",
-    fontSize: PixelRatio.getFontScale() * 13,
+    fontSize: PixelRatio.getFontScale() * 15,
     fontWeight: "700",
     fontFamily: "roboto",
   },
@@ -241,12 +249,12 @@ const styles = StyleSheet.create({
   },
   mildLabel: {
     color: "#1CC019",
-    fontSize: PixelRatio.getFontScale() * 12,
+    fontSize: PixelRatio.getFontScale() * 14,
     fontWeight: "bold",
   },
   hotLabel: {
     color: "#EF2A39",
-    fontSize: PixelRatio.getFontScale() * 12,
+    fontSize: PixelRatio.getFontScale() * 14,
     fontWeight: "bold",
   },
   quantityControlContainer: {
@@ -288,16 +296,16 @@ const styles = StyleSheet.create({
   flatListContainer: {
     flexDirection: "column",
     gap: "4%",
-    paddingTop: "6%",
+    paddingTop: "4%",
   },
   FlatList1content: {
     flexDirection: "column",
-    gap: "2%",
+    gap: "4%",
     paddingLeft: "4%",
   },
   FlatList2content: {
     flexDirection: "column",
-    gap: "2%",
+    gap: "4%",
     paddingLeft: "4%",
   },
   flatListHeading: {
@@ -313,7 +321,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    shadowColor: "#0000",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 6,
     shadowOpacity: 0.5,
@@ -360,14 +368,16 @@ const styles = StyleSheet.create({
   },
   orderContainer: {
     paddingHorizontal: "4%",
-    paddingTop: "5%",
+    paddingTop: "2%",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     gap: "4%",
   },
   totalContainer: {
     flexDirection: "column",
     gap: "2%",
+    width: "45%",
   },
   totalContainerHeading: {
     color: "#3C2F2F",
@@ -375,17 +385,32 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: PixelRatio.getFontScale() * 17,
   },
-  totalContainerText: {},
-  orderButtonContainer: {},
+  dollarSign: {
+    color: "#EF2A39",
+    fontSize: PixelRatio.getFontScale() * 22,
+    fontWeight: "semibold",
+    fontFamily: "roboto",
+  },
+  totalContainerText: {
+    color: "#3C2F2F",
+    fontSize: PixelRatio.getFontScale() * 30,
+    fontWeight: "semibold",
+    fontFamily: "roboto",
+  },
+  orderButtonContainer: {
+    width: "50%",
+  },
   orderButton: {
-    backgroundColor: "#EF2A39",
-    padding: "2%",
-    borderRadius: 16,
+    backgroundColor: "#3C2F2F",
+    width: "100%",
+    padding: 18,
+    borderRadius: 14,
   },
   orderButtonText: {
     color: "#FFF",
     fontFamily: "roboto",
     fontWeight: "700",
-    fontSize: PixelRatio.getFontScale() * 17,
+    textAlign: "center",
+    fontSize: PixelRatio.getFontScale() * 16,
   },
 });

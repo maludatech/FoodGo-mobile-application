@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Tabs, router } from "expo-router";
+import { Tabs, useRouter, usePathname } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
 
 interface Icons {
@@ -19,6 +19,15 @@ const TabIcon = ({ icon, color, focused }: Icons) => {
 };
 
 const TabLayout = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // List of screens where the tab bar should be hidden
+  const hideTabBarScreens = ["/Profile", "/AddItem", "/Support", "/Cart"];
+
+  // Determine if the tab bar should be hidden
+  const isTabBarHidden = hideTabBarScreens.includes(pathname);
+
   return (
     <>
       <Tabs
@@ -26,7 +35,10 @@ const TabLayout = () => {
           tabBarShowLabel: false,
           tabBarActiveTintColor: "#fff",
           tabBarInactiveTintColor: "#fff",
-          tabBarStyle: styles.tabBarStyle,
+          tabBarStyle: [
+            styles.tabBarStyle,
+            isTabBarHidden ? { display: "none" } : null, // Dynamically hide tab bar
+          ],
         }}
       >
         <Tabs.Screen
@@ -63,11 +75,10 @@ const TabLayout = () => {
             ),
           }}
         />
-
         <Tabs.Screen
           name="Support"
           options={{
-            title: "support",
+            title: "Support",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon icon="message-circle" color={color} focused={focused} />

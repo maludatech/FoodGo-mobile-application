@@ -262,7 +262,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 32,
     position: "relative",
-    paddingBottom: "40%",
     zIndex: 40,
   },
   imageContainer: {

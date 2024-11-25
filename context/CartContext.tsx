@@ -1,3 +1,4 @@
+import * as SecureStore from "expo-secure-store";
 import {
   createContext,
   useContext,
@@ -9,8 +10,12 @@ import {
 interface Product {
   id: string;
   name: string;
+  imageUrl: string;
   price: number;
   quantity: number;
+  spicyLevel: number;
+  toppings: [];
+  sideOptions: [];
 }
 
 interface CartContextType {
@@ -33,21 +38,36 @@ export const useCartContext = () => {
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  // Lazy initialization of cart from localStorage
-  const [cart, setCart] = useState<Product[]>(() => {
-    if (typeof window !== "undefined") {
-      const storedCart = localStorage.getItem("cart");
-      return storedCart ? JSON.parse(storedCart) : [];
-    }
-    return [];
-  });
+  const [cart, setCart] = useState<Product[]>([]);
   const [deliveryFee, setDeliveryFee] = useState(0);
 
-  // Save cart to localStorage whenever the cart state changes
+  // Initialize cart from SecureStore
   useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    }
+    const loadCart = async () => {
+      try {
+        const storedCart = await SecureStore.getItemAsync("cart");
+        if (storedCart) {
+          setCart(JSON.parse(storedCart));
+        }
+      } catch (error) {
+        console.error("Failed to load cart:", error);
+      }
+    };
+
+    loadCart();
+  }, []);
+
+  // Save cart to SecureStore whenever it changes
+  useEffect(() => {
+    const saveCart = async () => {
+      try {
+        await SecureStore.setItemAsync("cart", JSON.stringify(cart));
+      } catch (error) {
+        console.error("Failed to save cart:", error);
+      }
+    };
+
+    saveCart();
   }, [cart]);
 
   const addToCart = (product: Product) => {
@@ -63,6 +83,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return [...prevCart, { ...product, quantity: 1 }];
     });
   };
+  console.log("Cart:", cart);
 
   const removeFromCart = (id: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));

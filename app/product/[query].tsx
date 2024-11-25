@@ -8,6 +8,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { TouchableOpacity } from "react-native";
 import Slider from "@react-native-community/slider";
 import { ProductList } from "@/components/ProductList";
+import { useCartContext } from "@/context/CartContext";
 
 const Query = () => {
   const query = useLocalSearchParams();
@@ -26,6 +27,8 @@ const Query = () => {
   const filteredProduct = ProductList.filter((product) =>
     parsedIds.includes(product.id)
   );
+
+  const { addToCart } = useCartContext();
 
   const [quantity, setQuantity] = useState<number>(1);
   const [spicyLevel, setSpicyLevel] = useState(0);
@@ -121,12 +124,27 @@ const Query = () => {
                 </View>
                 <View style={styles.orderContainer}>
                   <View style={styles.orderContainerContent}>
-                    <TouchableOpacity style={styles.totalButton}>
+                    <View style={styles.totalButton}>
                       <Text style={styles.ButtonText}>
                         ${quantity * product.price}
                       </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.orderButton}>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.orderButton}
+                      onPress={() => {
+                        addToCart({
+                          id: String(product.id),
+                          name: product.nameTitle,
+                          imageUrl: product.imageUrl,
+                          price: product.price,
+                          quantity: quantity,
+                          spicyLevel: spicyLevel,
+                          toppings: [],
+                          sideOptions: [],
+                        });
+                        router.push("/checkout/OrderSummary");
+                      }}
+                    >
                       <Text style={styles.ButtonText}>ORDER NOW</Text>
                     </TouchableOpacity>
                   </View>

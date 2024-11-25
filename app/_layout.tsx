@@ -13,6 +13,7 @@ import "react-native-reanimated";
 import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { CartProvider } from "@/context/CartContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -87,8 +88,10 @@ export default function RootLayout() {
         <ThemeProvider
           value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-          <StatusBar style="light" />
-          <Slot />
+          <CartProvider>
+            <StatusBar style="light" />
+            <Slot />
+          </CartProvider>
         </ThemeProvider>
       </ClerkLoaded>
     </ClerkProvider>

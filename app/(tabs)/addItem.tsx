@@ -27,7 +27,7 @@ const AddItem = () => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: "50%" }}>
         <View style={styles.innerContainer}>
           <View style={styles.headerContainer}>
             <Icon
@@ -184,8 +184,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "column",
     flex: 1,
-    paddingTop: "4%",
-    paddingBottom: "35%",
+    paddingVertical: "4%",
   },
   headerContainer: {
     flexDirection: "row",
@@ -194,7 +193,6 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flexDirection: "column",
-    gap: 6,
   },
   mainContent: {
     flexDirection: "row",
@@ -205,7 +203,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "60%",
-    aspectRatio: 1,
+    aspectRatio: 0.75,
     alignSelf: "flex-start",
   },
   image: {
@@ -214,13 +212,12 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     flexDirection: "column",
-    gap: "4%",
+    gap: "8%",
     width: "38%",
   },
   description: {
     fontFamily: "roboto",
-    fontSize: PixelRatio.getFontScale() * 13,
-    fontWeight: "600",
+    fontSize: PixelRatio.getFontScale() * 14,
     color: "#3C2F2F",
   },
   customizeText: {
@@ -232,8 +229,8 @@ const styles = StyleSheet.create({
   },
   specificationText: {
     color: "#3C2F2F",
-    fontSize: PixelRatio.getFontScale() * 15,
-    fontWeight: "700",
+    fontSize: PixelRatio.getFontScale() * 14,
+    fontWeight: "medium",
     fontFamily: "roboto",
   },
   sliderContainer: {
@@ -295,7 +292,7 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     flexDirection: "column",
-    gap: "4%",
+    gap: "8%",
     paddingTop: "4%",
   },
   FlatList1content: {
@@ -368,7 +365,7 @@ const styles = StyleSheet.create({
   },
   orderContainer: {
     paddingHorizontal: "4%",
-    paddingTop: "2%",
+    // paddingTop: "2%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

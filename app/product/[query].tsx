@@ -142,7 +142,7 @@ const Query = () => {
                           toppings: [],
                           sideOptions: [],
                         });
-                        router.push("/checkout/OrderSummary");
+                        router.push("/(tabs)/Cart");
                       }}
                     >
                       <Text style={styles.ButtonText}>ORDER NOW</Text>

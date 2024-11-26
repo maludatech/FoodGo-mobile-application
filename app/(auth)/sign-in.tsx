@@ -11,19 +11,17 @@ import { StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as Linking from "expo-linking";
 import { Redirect, router } from "expo-router";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import Icon from "react-native-vector-icons/Feather";
+import { Image } from "react-native";
 import { useOAuth, useAuth } from "@clerk/clerk-expo";
 
 const SignIn = () => {
   const { isSignedIn } = useAuth();
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
 
   if (isSignedIn) {
     return <Redirect href={"/(tabs)"} />;
   }
-
-  const GoogleIcon = () => <Icon name="google" size={24} color="#fff" />;
-
-  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
 
   const handleSignIn = async () => {
     try {
@@ -60,11 +58,9 @@ const SignIn = () => {
                 <Icon
                   name="arrow-left"
                   color={"#fff"}
-                  size={20}
-                  solid
+                  size={24}
                   onPress={() => router.back()}
                 />
-                <Icon name="cog" color={"#fff"} size={20} solid />
               </View>
             </View>
           </View>
@@ -75,7 +71,12 @@ const SignIn = () => {
                 style={styles.loginButtonContainer}
                 onPress={handleSignIn}
               >
-                <GoogleIcon />
+                <Image
+                  source={require("../../assets/images/googleIcon.png")}
+                  style={{ width: 24, height: 24 }}
+                  alt="google icon"
+                  resizeMode="contain"
+                />
                 <Text style={styles.loginButtonTitle}>
                   Continue with Google
                 </Text>
@@ -150,19 +151,22 @@ const styles = StyleSheet.create({
   loginContainer: {
     borderWidth: 1,
     borderColor: "#d1d5db",
-    borderRadius: 16,
-    padding: 20,
+    backgroundColor: "#EF2A39",
+    borderRadius: 10,
+    padding: 30,
   },
   loginButtonContainer: {
-    backgroundColor: "#EF2A39",
+    backgroundColor: "#FFF",
     padding: 10,
-    borderRadius: 16,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
     flexDirection: "row",
     gap: 6,
     alignItems: "center",
   },
   loginButtonTitle: {
-    color: "#fff",
+    color: "#3C2F2F",
     fontWeight: "semibold",
     fontSize: 16,
     fontFamily: "roboto",

@@ -6,6 +6,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { useUser } from "@clerk/clerk-react";
 
 interface Product {
   id: string;
@@ -25,6 +26,7 @@ interface CartContextType {
   addToCart: (product: Product) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -38,16 +40,26 @@ export const useCartContext = () => {
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useUser(); // Get the current user from Clerk
+  const userId = user?.id;
+
   const [cart, setCart] = useState<Product[]>([]);
   const [deliveryFee, setDeliveryFee] = useState(0);
 
-  // Initialize cart from SecureStore
+  // Load cart from SecureStore based on userId
   useEffect(() => {
     const loadCart = async () => {
+      if (!userId) {
+        setCart([]); // Clear the cart if no user is logged in
+        return;
+      }
+
       try {
-        const storedCart = await SecureStore.getItemAsync("cart");
+        const storedCart = await SecureStore.getItemAsync(`cart_${userId}`);
         if (storedCart) {
           setCart(JSON.parse(storedCart));
+        } else {
+          setCart([]); // Initialize an empty cart for a new user
         }
       } catch (error) {
         console.error("Failed to load cart:", error);
@@ -55,21 +67,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
 
     loadCart();
-  }, []);
+  }, [userId]);
 
   // Save cart to SecureStore whenever it changes
   useEffect(() => {
     const saveCart = async () => {
+      if (!userId) return; // Skip saving if no user is logged in
+
       try {
-        await SecureStore.setItemAsync("cart", JSON.stringify(cart));
+        await SecureStore.setItemAsync(`cart_${userId}`, JSON.stringify(cart));
       } catch (error) {
         console.error("Failed to save cart:", error);
       }
     };
 
     saveCart();
-  }, [cart]);
+  }, [cart, userId]);
 
+  // Add a product to the cart
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
       const existingProduct = prevCart.find((item) => item.id === product.id);
@@ -83,16 +98,22 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return [...prevCart, { ...product, quantity: 1 }];
     });
   };
-  console.log("Cart:", cart);
 
+  // Remove a product from the cart
   const removeFromCart = (id: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
+  // Update the quantity of a product in the cart
   const updateQuantity = (id: string, quantity: number) => {
     setCart((prevCart) =>
       prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
     );
+  };
+
+  // Clear the cart
+  const clearCart = () => {
+    setCart([]);
   };
 
   return (
@@ -104,6 +125,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeFromCart,
         updateQuantity,
         setDeliveryFee,
+        clearCart,
       }}
     >
       {children}

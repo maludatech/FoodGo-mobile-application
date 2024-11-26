@@ -16,10 +16,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router, Redirect } from "expo-router";
 import { useUser, useAuth } from "@clerk/clerk-expo";
+import { useCartContext } from "@/context/CartContext";
 
 const Profile = () => {
   const { user } = useUser();
   const { signOut, isSignedIn } = useAuth();
+  const { clearCart } = useCartContext();
 
   if (!isSignedIn) {
     return <Redirect href={"/(auth)/sign-in"} />;
@@ -50,8 +52,9 @@ const Profile = () => {
         "Validation Error",
         "Delivery address cannot be empty. Please provide a valid address."
       );
-      return; // Stop further execution if validation fails
+      return;
     }
+
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -62,14 +65,22 @@ const Profile = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      if (response.ok) {
-        Alert.alert("Profile updated successfully!!");
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        Alert.alert(
+          "Error updating profile",
+          errorData.message || "Please try again later."
+        );
+        return;
       }
+
+      Alert.alert("Profile updated successfully!");
     } catch (error) {
       console.error("Fetch User details error: ", error);
       Alert.alert(
-        "Error updating profile",
-        "There was an error updating your profile. Please try again."
+        "Network Error",
+        "Unable to connect to the server. Please check your internet connection."
       );
     } finally {
       setIsLoading(false);
@@ -83,6 +94,7 @@ const Profile = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
+      clearCart();
     } catch (error) {
       Alert.alert(
         "Sign Out Error",

@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 18,
-    color: "#6B7280",
+    color: "#808080",
     textAlign: "center",
     marginBottom: 32,
   },

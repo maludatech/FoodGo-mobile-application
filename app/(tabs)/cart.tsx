@@ -13,7 +13,6 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCartContext } from "@/context/CartContext";
 import { PixelRatio } from "react-native";
-import { Switch } from "react-native";
 
 const Cart = () => {
   const { cart, setDeliveryFee } = useCartContext();
@@ -33,7 +32,7 @@ const Cart = () => {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={{ paddingBottom: "50%" }}>
+      <ScrollView>
         <View style={styles.innerContainer}>
           <View style={styles.headerContainer}>
             <Icon
@@ -49,36 +48,34 @@ const Cart = () => {
               onPress={() => router.back()}
             />
           </View>
-          <View style={styles.mainContainer}>
-            <View style={styles.summary}>
-              <Text style={styles.summaryHeading}>Order summary</Text>
-              <View style={styles.orderDetailsContainer}>
+          <View style={styles.summaryContainer}>
+            <Text style={styles.summaryHeading}>Order summary</Text>
+            <View style={styles.orderDetailsContainer}>
+              <View style={styles.orderDetails}>
+                <Text style={styles.orderDetailsText}>Order</Text>
+                <Text style={styles.orderDetailsText}>
+                  ${totalPrice.toFixed(2)}
+                </Text>
+              </View>
+              <View style={styles.orderDetails}>
+                <Text style={styles.orderDetailsText}>Taxes</Text>
+                <Text style={styles.orderDetailsText}>${tax}</Text>
+              </View>
+              <View style={styles.orderDetails}>
+                <Text style={styles.orderDetailsText}>Delivery fees</Text>
+                <Text style={styles.orderDetailsText}>${deliveryFee}</Text>
+              </View>
+              <View style={styles.borderTop}></View>
+              <View style={styles.TotalContainer}>
                 <View style={styles.orderDetails}>
-                  <Text style={styles.orderDetailsText}>Order</Text>
-                  <Text style={styles.orderDetailsText}>
-                    ${totalPrice.toFixed(2)}
+                  <Text style={styles.total}>Total</Text>
+                  <Text style={styles.total}>$ {total.toFixed(2)}</Text>
+                </View>
+                <View style={styles.orderDetails}>
+                  <Text style={styles.deliveryTime}>
+                    Estimated delivery time
                   </Text>
-                </View>
-                <View style={styles.orderDetails}>
-                  <Text style={styles.orderDetailsText}>Taxes</Text>
-                  <Text style={styles.orderDetailsText}>${tax}</Text>
-                </View>
-                <View style={styles.orderDetails}>
-                  <Text style={styles.orderDetailsText}>Delivery fees</Text>
-                  <Text style={styles.orderDetailsText}>${deliveryFee}</Text>
-                </View>
-                <View style={styles.borderTop}></View>
-                <View style={styles.TotalContainer}>
-                  <View style={styles.orderDetails}>
-                    <Text style={styles.total}>Total</Text>
-                    <Text style={styles.total}>$ {total.toFixed(2)}</Text>
-                  </View>
-                  <View style={styles.orderDetails}>
-                    <Text style={styles.deliveryTime}>
-                      Estimated delivery time
-                    </Text>
-                    <Text style={styles.deliveryTime}>15 - 30 mins</Text>
-                  </View>
+                  <Text style={styles.deliveryTime}>15 - 30 mins</Text>
                 </View>
               </View>
             </View>
@@ -152,7 +149,10 @@ const Cart = () => {
               </Text>
             </View>
             <View style={styles.orderButtonContainer}>
-              <TouchableOpacity style={styles.orderButton}>
+              <TouchableOpacity
+                style={styles.orderButton}
+                onPress={() => router.push("/checkout/PaymentSuccess")}
+              >
                 <Text style={styles.orderButtonText}>Pay Now</Text>
               </TouchableOpacity>
             </View>
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "column",
     flex: 1,
-    paddingVertical: "4%",
+    paddingTop: "4%",
   },
   headerContainer: {
     flexDirection: "row",
@@ -181,14 +181,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: "4%",
   },
-  mainContainer: {
+  summaryContainer: {
     flexDirection: "column",
-    paddingHorizontal: "4%",
-  },
-  summary: {
-    flexDirection: "column",
-    gap: "6%",
     paddingTop: "6%",
+    paddingHorizontal: "4%",
   },
   summaryHeading: {
     fontSize: PixelRatio.getFontScale() * 20,
@@ -200,6 +196,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: "6%",
     paddingHorizontal: "6%",
+    paddingTop: "2%",
   },
   orderDetails: {
     flexDirection: "row",
@@ -246,7 +243,7 @@ const styles = StyleSheet.create({
   },
   paymentCards: {
     flexDirection: "column",
-    gap: "4%",
+    gap: "6%",
   },
   masterCardButtonContainer: {
     flexDirection: "row",
@@ -331,6 +328,7 @@ const styles = StyleSheet.create({
   },
   orderContainer: {
     paddingHorizontal: "4%",
+    paddingTop: "4%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

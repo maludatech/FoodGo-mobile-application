@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 16,
+    elevation: 3,
   },
   quantityControlButtonsText: {
     color: "#fff",
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 6,
     shadowOpacity: 0.5,
-    elevation: 24,
+    elevation: 3,
     zIndex: 10,
     marginLeft: "2%",
   },

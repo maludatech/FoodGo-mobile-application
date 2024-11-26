@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 24,
+    elevation: 3,
   },
   formContainer: {
     flexDirection: "column",

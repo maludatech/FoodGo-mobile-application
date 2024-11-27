@@ -71,11 +71,10 @@ const Cart = () => {
             placeholder="Type here..."
             placeholderTextColor={"#808080"}
             style={styles.sendMessageTextInput}
-            value={message}
             onChangeText={setText}
             multiline={true}
-            textAlignVertical="top" // Ensures proper vertical alignment for multiline
-            numberOfLines={4} // Controls the initial height
+            textAlignVertical="top"
+            numberOfLines={4}
           />
           <TouchableOpacity
             style={styles.sendMessageIconContainer}
@@ -198,8 +197,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 8,
     marginRight: 12,
-    minHeight: 50, // Set a minimum height for multiple lines
-    maxHeight: 120, // Optional: limit the maximum height
+    minHeight: 50,
+    maxHeight: 120,
   },
   sendMessageIconContainer: {
     backgroundColor: "#EF2A39",

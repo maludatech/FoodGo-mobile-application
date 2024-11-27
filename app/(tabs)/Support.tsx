@@ -69,10 +69,13 @@ const Cart = () => {
         <View style={styles.sendMessageContainer}>
           <TextInput
             placeholder="Type here..."
-            placeholderTextColor={"#DBDADA"}
+            placeholderTextColor={"#808080"}
             style={styles.sendMessageTextInput}
             value={message}
             onChangeText={setText}
+            multiline={true}
+            textAlignVertical="top" // Ensures proper vertical alignment for multiline
+            numberOfLines={4} // Controls the initial height
           />
           <TouchableOpacity
             style={styles.sendMessageIconContainer}
@@ -96,17 +99,19 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: "column",
     flex: 1,
-    padding: "4%",
+    paddingVertical: "4%",
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingHorizontal: "4%",
   },
   chatContainer: {
     flexDirection: "column",
-    gap: 16,
+    gap: 24,
     paddingTop: "6%",
+    paddingHorizontal: "4%",
   },
   adminContainer: {
     flexDirection: "row",
@@ -125,10 +130,12 @@ const styles = StyleSheet.create({
   adminTextContainer: {
     backgroundColor: "#F3F4F6",
     borderRadius: 12,
-    padding: 6,
+    paddingVertical: "2%",
+    paddingHorizontal: "4%",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    maxWidth: "75%",
   },
   adminText: {
     color: "#3C2F2F",
@@ -157,10 +164,12 @@ const styles = StyleSheet.create({
   userTextContainer: {
     backgroundColor: "#EF2A39",
     borderRadius: 12,
-    padding: 6,
+    paddingVertical: "2%",
+    paddingHorizontal: "4%",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    maxWidth: "75%",
   },
   userText: {
     color: "#FFF",
@@ -169,24 +178,28 @@ const styles = StyleSheet.create({
     fontFamily: "roboto",
   },
   sendMessageContainer: {
-    position: "absolute",
-    bottom: "3%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: "4%",
+    paddingVertical: 8,
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
   },
   sendMessageTextInput: {
-    flex: 1, // Make it occupy the remaining space
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    flex: 1,
+    padding: 16,
     borderRadius: 8,
     backgroundColor: "#F3F4F6",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 8,
     marginRight: 12,
+    minHeight: 50, // Set a minimum height for multiple lines
+    maxHeight: 120, // Optional: limit the maximum height
   },
   sendMessageIconContainer: {
     backgroundColor: "#EF2A39",

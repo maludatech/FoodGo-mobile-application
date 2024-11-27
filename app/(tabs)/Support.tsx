@@ -18,12 +18,13 @@ import { useUser } from "@clerk/clerk-expo";
 const Cart = () => {
   const { user } = useUser();
   const [message, setMessage] = useState<string>();
+  const [text, setText] = useState<string>();
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <StatusBar style="dark" />
-      <ScrollView>
-        <View style={styles.innerContainer}>
+      <View style={styles.innerContainer}>
+        <ScrollView>
           <View style={styles.headerContainer}>
             <Icon
               name="arrow-left"
@@ -62,20 +63,25 @@ const Cart = () => {
               </View>
             )}
           </View>
-          <View style={styles.sendMessageContainer}>
-            <TextInput
-              placeholder="Type here..."
-              placeholderTextColor={"#DBDADA"}
-              style={styles.sendMessageTextInput}
-              value={message}
-              onChangeText={setMessage}
-            />
-            <View style={styles.sendMessageIconContainer}>
-              <Icon name="send" size={24} color={"#FFF"} />
-            </View>
-          </View>
+        </ScrollView>
+
+        {/* Send Message Container Outside ScrollView */}
+        <View style={styles.sendMessageContainer}>
+          <TextInput
+            placeholder="Type here..."
+            placeholderTextColor={"#DBDADA"}
+            style={styles.sendMessageTextInput}
+            value={message}
+            onChangeText={setText}
+          />
+          <TouchableOpacity
+            style={styles.sendMessageIconContainer}
+            onPress={() => setMessage(text)}
+          >
+            <Icon name="send" size={24} color={"#FFF"} />
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -99,7 +105,7 @@ const styles = StyleSheet.create({
   },
   chatContainer: {
     flexDirection: "column",
-    gap: "4%",
+    gap: 16,
     paddingTop: "6%",
   },
   adminContainer: {
@@ -139,12 +145,14 @@ const styles = StyleSheet.create({
     height: 48,
     width: 48,
     borderRadius: 24,
-    borderWidth: 1,
+    borderWidth: 2,
+    overflow: "hidden",
     borderColor: "#EF2A39",
   },
   userImage: {
     width: "100%",
     height: "100%",
+    resizeMode: "contain",
   },
   userTextContainer: {
     backgroundColor: "#EF2A39",
@@ -162,9 +170,10 @@ const styles = StyleSheet.create({
   },
   sendMessageContainer: {
     position: "absolute",
-    bottom: "5%",
+    bottom: "3%",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
   sendMessageTextInput: {
     flex: 1, // Make it occupy the remaining space

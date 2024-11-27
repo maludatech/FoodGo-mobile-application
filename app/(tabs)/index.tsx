@@ -9,6 +9,7 @@ import {
   FlatList,
   StyleSheet,
   Dimensions,
+  PixelRatio,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Feather";
@@ -16,7 +17,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { router, Redirect } from "expo-router";
 import { useUser, useAuth } from "@clerk/clerk-expo";
 import { ProductList } from "@/components/ProductList";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function HomeScreen() {
   const { user } = useUser();
@@ -68,6 +69,22 @@ export default function HomeScreen() {
   const numColumns = Math.floor(screenWidth / desiredColumnWidth);
 
   const slide = ["All", "Sliders", "Combo", "Classic"];
+
+  const [isActive, setIsActive] = useState<number | null>(0);
+  const [query, setQuery] = useState<string>();
+  const [filteredProducts, setFilteredProducts] = useState(ProductList || []);
+
+  useEffect(() => {
+    if (query) {
+      const filtered = ProductList.filter((item) =>
+        item.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(ProductList);
+    }
+  }, [query, ProductList]);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
@@ -99,6 +116,7 @@ export default function HomeScreen() {
                 placeholder="Search"
                 placeholderTextColor={"#3C2F2F"}
                 style={styles.searchInput}
+                onChangeText={(text) => setQuery(text)}
               />
             </View>
             <TouchableOpacity style={styles.filterButton}>
@@ -117,13 +135,16 @@ export default function HomeScreen() {
                 <TouchableOpacity
                   style={[
                     styles.slideButton,
-                    index === 0 ? styles.activeSlide : styles.inactiveSlide,
+                    isActive === index
+                      ? styles.activeSlide
+                      : styles.inactiveSlide,
                   ]}
+                  onPress={() => setIsActive(index)}
                 >
                   <Text
                     style={[
                       styles.slideText,
-                      index === 0
+                      isActive === index
                         ? styles.activeSlideText
                         : styles.inactiveSlideText,
                     ]}
@@ -134,44 +155,47 @@ export default function HomeScreen() {
               </View>
             )}
           />
-          <FlatList
-            data={ProductList}
-            nestedScrollEnabled={true}
-            numColumns={numColumns}
-            keyExtractor={(item) => item.id.toString()}
-            style={styles.productList}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.productContainer}
-                onPress={() => router.push(`/product/${item.id}`)}
-              >
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{ uri: item.imageUrl }}
-                    style={styles.productImage}
-                    alt={item.name}
-                    resizeMode="contain"
-                  />
-                </View>
-                <View style={styles.productDetails}>
-                  <Text style={styles.productName}>{item.name}</Text>
-                  <Text style={styles.productTitle}>{item.title}</Text>
-                </View>
-                <View style={styles.ratingContainer}>
-                  <View style={styles.rating}>
-                    <FontAwesome name="star" color={"#FF9633"} size={20} />
-                    <Text style={{ fontWeight: "600" }}>{item.rating}</Text>
+          {filteredProducts.length === 0 ? (
+            <Text style={styles.noProductFound}>No products found</Text>
+          ) : (
+            <FlatList
+              data={filteredProducts}
+              nestedScrollEnabled={true}
+              numColumns={numColumns}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.productContainer}
+                  onPress={() => router.push(`/product/${item.id}`)}
+                >
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={{ uri: item.imageUrl }}
+                      style={styles.productImage}
+                      alt={item.name}
+                      resizeMode="contain"
+                    />
                   </View>
-                  <Icon
-                    name="heart"
-                    color={"#3C2F2F"}
-                    size={20}
-                    style={{ fontWeight: "bold" }}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          />
+                  <View style={styles.productDetails}>
+                    <Text style={styles.productName}>{item.name}</Text>
+                    <Text style={styles.productTitle}>{item.title}</Text>
+                  </View>
+                  <View style={styles.ratingContainer}>
+                    <View style={styles.rating}>
+                      <FontAwesome name="star" color={"#FF9633"} size={20} />
+                      <Text style={{ fontWeight: "600" }}>{item.rating}</Text>
+                    </View>
+                    <Icon
+                      name="heart"
+                      color={"#3C2F2F"}
+                      size={20}
+                      style={{ fontWeight: "bold" }}
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -281,6 +305,14 @@ const styles = StyleSheet.create({
   productList: {
     paddingHorizontal: "2%",
     paddingBottom: "5%",
+  },
+  noProductFound: {
+    color: "#3C2F2F",
+    fontSize: PixelRatio.getFontScale() * 18,
+    textAlign: "center",
+    marginTop: "20%",
+    fontFamily: "roboto",
+    fontWeight: "bold",
   },
   productContainer: {
     backgroundColor: "white",

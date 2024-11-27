@@ -181,11 +181,17 @@ const Profile = () => {
             </View>
             <View style={styles.moreInfoContainer}>
               <View style={styles.borderTop}></View>
-              <TouchableOpacity style={styles.moreInfoContent}>
+              <TouchableOpacity
+                style={styles.moreInfoContent}
+                onPress={() => router.push("/account/paymentDetails")}
+              >
                 <Text style={styles.moreInfoText}>Payment Details</Text>
                 <Icon name="arrow-right" size={16} color={"#6B7280"} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.moreInfoContent}>
+              <TouchableOpacity
+                style={styles.moreInfoContent}
+                onPress={() => router.push("/account/orderHistory")}
+              >
                 <Text style={styles.moreInfoText}>Order History</Text>
                 <Icon name="arrow-right" size={16} color={"#6B7280"} />
               </TouchableOpacity>

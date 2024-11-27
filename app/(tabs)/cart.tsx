@@ -15,7 +15,7 @@ import { useCartContext } from "@/context/CartContext";
 import { PixelRatio } from "react-native";
 
 const Cart = () => {
-  const { cart, setDeliveryFee } = useCartContext();
+  const { cart, setDeliveryFee, clearCart } = useCartContext();
 
   const totalPrice = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -42,10 +42,10 @@ const Cart = () => {
               onPress={() => router.back()}
             />
             <Icon
-              name="search"
+              name="trash-2"
               size={24}
               color={"#3C2F2F"}
-              onPress={() => router.back()}
+              onPress={clearCart}
             />
           </View>
           <View style={styles.summaryContainer}>

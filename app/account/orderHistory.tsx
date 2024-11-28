@@ -4,11 +4,10 @@ import {
   StyleSheet,
   ScrollView,
   ImageBackground,
-  Image,
-  TextInput,
   TouchableOpacity,
-  Alert,
+  FlatList,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import React, { useEffect, useState } from "react";
@@ -18,36 +17,37 @@ import { router, Redirect } from "expo-router";
 import { useUser, useAuth } from "@clerk/clerk-expo";
 import { useCartContext } from "@/context/CartContext";
 
-const orderHistory = () => {
+const OrderHistory = () => {
   const { user } = useUser();
   const { signOut, isSignedIn } = useAuth();
   const { clearCart } = useCartContext();
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   if (!isSignedIn) {
     return <Redirect href={"/(auth)/sign-in"} />;
   }
 
-  const email = user?.emailAddresses[0].emailAddress;
-  const [deliveryAddress, setDeliveryAddress] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  useEffect(() => {
+    fetchOrderHistory();
+  }, []);
 
-  const fetchUserOrderHistory = async () => {
+  const fetchOrderHistory = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(
-        `https://food-go-backend.vercel.app/api/user/profile/${email}`
+        `https://food-go-backend.vercel.app/api/orders/${user?.emailAddresses[0].emailAddress}`
       );
       if (response.ok) {
-        const result = await response.json();
-        setDeliveryAddress(result.deliveryAddress);
+        const data = await response.json();
+        setOrders(data.orders);
       }
     } catch (error) {
-      console.error("Fetch User details error: ", error);
+      console.error("Error fetching orders:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (email) fetchUserOrderHistory();
-  }, [email]);
 
   const handleSignOut = async () => {
     try {
@@ -62,100 +62,99 @@ const orderHistory = () => {
     }
   };
 
+  const renderOrder = ({ item }: any) => (
+    <TouchableOpacity style={styles.orderCard}>
+      <View style={styles.orderInfo}>
+        <Text style={styles.orderId}>Order #{item.id}</Text>
+        <Text style={styles.orderDate}>{item.date}</Text>
+      </View>
+      <Text style={styles.orderStatus}>{item.status}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#EF2A39" style="light" />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.innerContainer}>
-          <View style={styles.firstContainer}>
-            {/* Left and Right background images */}
-            <ImageBackground
-              source={require("../../assets/images/left-side.png")}
-              style={[styles.backgroundImage, styles.leftImage]}
-              resizeMode="contain"
-            />
-            <ImageBackground
-              source={require("../../assets/images/right-side.png")}
-              style={[styles.backgroundImage, styles.rightImage]}
-              resizeMode="contain"
-            />
-            <View style={styles.overlay}>
-              <View style={styles.header}>
-                <Icon
-                  name="arrow-left"
-                  color={"#fff"}
-                  size={20}
-                  onPress={() => router.back()}
-                />
-                <Icon
-                  name="log-out"
-                  color={"#fff"}
-                  size={20}
-                  onPress={handleSignOut}
-                />
-              </View>
-            </View>
-          </View>
-          <View style={styles.secondContainer}></View>
-        </View>
-      </ScrollView>
+      <View style={styles.header}>
+        <Icon
+          name="arrow-left"
+          size={24}
+          color="#fff"
+          onPress={() => router.back()}
+        />
+        <Text style={styles.headerTitle}>Order History</Text>
+        <Icon
+          name="log-out"
+          size={24}
+          color="#fff"
+          onPress={() => handleSignOut}
+        />
+      </View>
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color="#EF2A39"
+          style={{ marginTop: 20 }}
+        />
+      ) : (
+        <FlatList
+          data={orders}
+          keyExtractor={(item: any) => item.id}
+          renderItem={renderOrder}
+          ListEmptyComponent={
+            <Text style={styles.emptyMessage}>No orders found.</Text>
+          }
+          contentContainerStyle={{ padding: 16 }}
+        />
+      )}
     </SafeAreaView>
   );
 };
 
-export default orderHistory;
+export default OrderHistory;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EF2A39",
-  },
-  innerContainer: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  firstContainer: {
-    backgroundColor: "#EF2A39",
-    position: "relative",
-    overflow: "hidden",
-    zIndex: 10,
-    height: "20%",
+    backgroundColor: "#fff",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    zIndex: 20,
-    paddingHorizontal: "4%",
-    paddingTop: "2%",
+    backgroundColor: "#EF2A39",
+    padding: 16,
   },
-  backgroundImage: {
-    position: "absolute",
-    width: 200,
-    height: 200,
+  headerTitle: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "bold",
   },
-  leftImage: {
-    top: 15,
-    left: "-13%",
+  orderCard: {
+    backgroundColor: "#f9f9f9",
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    elevation: 2,
   },
-  rightImage: {
-    top: 15,
-    right: "-13%",
+  orderInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(239, 42, 57, 0.6)",
-    zIndex: 5,
+  orderId: {
+    fontWeight: "bold",
   },
-  secondContainer: {
-    borderTopRightRadius: 48,
-    borderTopLeftRadius: 48,
-    padding: "4%",
-    backgroundColor: "#fff",
-    minHeight: "100%",
-    flexDirection: "column",
-    gap: 32,
-    position: "relative",
-    zIndex: 40,
+  orderDate: {
+    color: "#666",
+  },
+  orderStatus: {
+    marginTop: 8,
+    color: "#EF2A39",
+    fontWeight: "bold",
+  },
+  emptyMessage: {
+    textAlign: "center",
+    color: "#666",
+    marginTop: 20,
   },
 });

@@ -118,19 +118,32 @@ const PaymentDetails = () => {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.innerContainer}>
           <View style={styles.firstContainer}>
-            <View style={styles.header}>
-              <Icon
-                name="arrow-left"
-                color={"#fff"}
-                size={20}
-                onPress={() => router.back()}
-              />
-              <Icon
-                name="log-out"
-                color={"#fff"}
-                size={20}
-                onPress={() => handleSignOut()}
-              />
+            {/* Left and Right background images */}
+            <ImageBackground
+              source={require("../../assets/images/left-side.png")}
+              style={[styles.backgroundImage, styles.leftImage]}
+              resizeMode="contain"
+            />
+            <ImageBackground
+              source={require("../../assets/images/right-side.png")}
+              style={[styles.backgroundImage, styles.rightImage]}
+              resizeMode="contain"
+            />
+            <View style={styles.overlay}>
+              <View style={styles.header}>
+                <Icon
+                  name="arrow-left"
+                  color={"#fff"}
+                  size={20}
+                  onPress={() => router.back()}
+                />
+                <Icon
+                  name="log-out"
+                  color={"#fff"}
+                  size={20}
+                  onPress={handleSignOut}
+                />
+              </View>
             </View>
           </View>
           <View style={styles.secondContainer}>
@@ -208,16 +221,40 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
+    flexDirection: "column",
   },
   firstContainer: {
-    height: "20%",
     backgroundColor: "#EF2A39",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    position: "relative",
+    overflow: "hidden",
+    zIndex: 10,
+    height: "20%",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    zIndex: 20,
+    paddingHorizontal: "4%",
+    paddingTop: "2%",
+  },
+  backgroundImage: {
+    position: "absolute",
+    width: 200,
+    height: 200,
+  },
+  leftImage: {
+    top: 15,
+    left: "-13%",
+  },
+  rightImage: {
+    top: 15,
+    right: "-13%",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(239, 42, 57, 0.6)",
+    zIndex: 5,
   },
   secondContainer: {
     backgroundColor: "#fff",

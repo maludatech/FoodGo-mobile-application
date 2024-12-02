@@ -111,7 +111,10 @@ const SignUp = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" backgroundColor="#EF2A39" />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 20 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.innerContainer}>
           <View style={styles.firstContainer}>
             {/* Left and Right background images */}
@@ -297,7 +300,7 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
     zIndex: 10,
-    height: "25%",
+    height: "20%",
   },
   header: {
     flexDirection: "row",
@@ -371,14 +374,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   button: {
-    backgroundColor: "#16423C",
+    backgroundColor: "#EF2A39",
     padding: 16,
     width: "100%",
     borderRadius: 30,
   },
   buttonText: {
     fontWeight: "bold",
-    color: "#FFE5CF",
+    color: "#FFF",
     textAlign: "center",
     textTransform: "uppercase",
     fontFamily: "roboto",

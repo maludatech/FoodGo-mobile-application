@@ -7,7 +7,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
-import { Stack } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { CartProvider } from "@/context/CartContext";
@@ -44,9 +44,7 @@ export default function RootLayout() {
         <CartProvider>
           <StatusBar style="light" />
           <Stack>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
+            <Slot />
           </Stack>
         </CartProvider>
       </AuthContextProvider>

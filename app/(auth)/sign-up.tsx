@@ -13,16 +13,8 @@ import * as Linking from "expo-linking";
 import { Redirect, router } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
 import { Image } from "react-native";
-import { useOAuth, useAuth } from "@clerk/clerk-expo";
 
 const SignUp = () => {
-  const { isSignedIn } = useAuth();
-  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
-
-  if (isSignedIn) {
-    return <Redirect href={"/(tabs)"} />;
-  }
-
   const handleSignUp = async () => {
     try {
     } catch (error) {

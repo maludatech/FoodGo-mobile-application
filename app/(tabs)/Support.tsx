@@ -7,16 +7,23 @@ import {
   Image,
   TextInput,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/Feather";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PixelRatio } from "react-native";
-import { useUser } from "@clerk/clerk-expo";
+import { useAuthContext } from "@/context/AuthContext";
 
 const Cart = () => {
-  const { user } = useUser();
+  const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/(auth)/sign-in");
+    }
+  }, [user]);
+
   const [message, setMessage] = useState<string>();
   const [text, setText] = useState<string>();
 

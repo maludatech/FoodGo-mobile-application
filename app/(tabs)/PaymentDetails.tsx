@@ -14,14 +14,13 @@ import Icon from "react-native-vector-icons/Feather";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { router, Redirect } from "expo-router";
-import { useUser, useAuth } from "@clerk/clerk-expo";
+import { router } from "expo-router";
+import { useAuthContext } from "@/context/AuthContext";
 import { useCartContext } from "@/context/CartContext";
 
 const PaymentDetails = () => {
-  const { user } = useUser();
-  const { signOut, isSignedIn } = useAuth();
-  const email = user?.emailAddresses[0].emailAddress;
+  const { user, dispatch } = useAuthContext();
+  const email = user?.email;
   const { clearCart } = useCartContext();
 
   const [cards, setCards] = useState([]);
@@ -101,7 +100,7 @@ const PaymentDetails = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      dispatch({ type: "LOGOUT" });
       clearCart();
     } catch (error) {
       Alert.alert(

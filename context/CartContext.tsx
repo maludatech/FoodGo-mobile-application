@@ -6,7 +6,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { useAuthContext } from "./AuthContext";
 
 interface Product {
   id: string;
@@ -30,6 +30,7 @@ interface CartContextType {
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+// const { user } = useAuthContext();
 
 export const useCartContext = () => {
   const context = useContext(CartContext);
@@ -40,9 +41,8 @@ export const useCartContext = () => {
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useUser(); // Get the current user from Clerk
-  const userId = user?.id;
-
+  const userId = 12456773;
+  // user?.userId;
   const [cart, setCart] = useState<Product[]>([]);
   const [deliveryFee, setDeliveryFee] = useState(0);
 
@@ -50,7 +50,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const loadCart = async () => {
       if (!userId) {
-        setCart([]); // Clear the cart if no user is logged in
+        setCart([]);
         return;
       }
 

@@ -10,29 +10,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as Linking from "expo-linking";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
 import { Image } from "react-native";
-import { useOAuth, useAuth } from "@clerk/clerk-expo";
 
 const SignIn = () => {
-  const { isSignedIn } = useAuth();
-  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
-
-  if (isSignedIn) {
-    return <Redirect href={"/(tabs)"} />;
-  }
-
   const handleSignIn = async () => {
     try {
-      const { createdSessionId, setActive } = await startOAuthFlow({
-        redirectUrl: Linking.createURL("/(tabs)/", { scheme: "myapp" }),
-      });
-      if (createdSessionId && setActive) {
-        setActive({ session: createdSessionId });
-      }
     } catch (error) {
-      console.error("Google Sign-In Error:", error);
+      console.error("Sign in Error:", error);
     }
   };
 

@@ -15,26 +15,27 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router, Redirect } from "expo-router";
-import { useUser, useAuth } from "@clerk/clerk-expo";
+import { useAuthContext } from "@/context/AuthContext";
 import { useCartContext } from "@/context/CartContext";
 
 const Profile = () => {
-  const { user } = useUser();
-  const { signOut, isSignedIn } = useAuth();
+  const { user } = useAuthContext();
   const { clearCart } = useCartContext();
 
-  if (!isSignedIn) {
-    return <Redirect href={"/(auth)/sign-in"} />;
-  }
+  useEffect(() => {
+    if (!user) {
+      router.push("/(auth)/sign-in");
+    }
+  }, [user]);
 
-  const email = user?.emailAddresses[0].emailAddress;
+  const userId = user?.userId;
   const [deliveryAddress, setDeliveryAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchUserDetails = async () => {
     try {
       const response = await fetch(
-        `https://food-go-backend.vercel.app/api/user/profile/${email}`
+        `https://food-go-backend.vercel.app/api/user/profile/${userId}`
       );
       if (response.ok) {
         const result = await response.json();
@@ -58,7 +59,7 @@ const Profile = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://food-go-backend.vercel.app/api/user/profile/${email}`,
+        `https://food-go-backend.vercel.app/api/user/profile/${userId}`,
         {
           method: "PATCH",
           body: JSON.stringify({ deliveryAddress }),
@@ -88,8 +89,8 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (email) fetchUserDetails();
-  }, [email]);
+    fetchUserDetails();
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -166,7 +167,7 @@ const Profile = () => {
                 <Text style={styles.label}>Email</Text>
                 <TextInput
                   style={styles.input}
-                  value={user?.emailAddresses[0]?.emailAddress as string}
+                  value={user?.email}
                   editable={false}
                 />
               </View>

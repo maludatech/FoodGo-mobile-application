@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  ImageBackground,
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
@@ -13,22 +12,18 @@ import Icon from "react-native-vector-icons/Feather";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { router, Redirect } from "expo-router";
-import { useUser, useAuth } from "@clerk/clerk-expo";
+import { router } from "expo-router";
+import { useAuthContext } from "@/context/AuthContext";
 import { useCartContext } from "@/context/CartContext";
 
 const OrderHistory = () => {
-  const { user } = useUser();
-  const { signOut, isSignedIn } = useAuth();
+  const { user, dispatch } = useAuthContext();
   const { clearCart } = useCartContext();
-  const email = user?.emailAddresses[0].emailAddress;
+
+  const email = user?.email;
 
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  if (!isSignedIn) {
-    return <Redirect href={"/(auth)/sign-in"} />;
-  }
 
   useEffect(() => {
     fetchOrderHistory();
@@ -54,7 +49,7 @@ const OrderHistory = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      dispatch({ type: "LOGOUT" });
       clearCart();
     } catch (error) {
       Alert.alert(

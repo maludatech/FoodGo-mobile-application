@@ -4,21 +4,114 @@ import {
   ScrollView,
   ImageBackground,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import * as Linking from "expo-linking";
-import { router } from "expo-router";
+import { router, Link } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
-import { Image } from "react-native";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { useAuthContext } from "@/context/AuthContext";
+import Spinner from "@/components/Spinner";
 
+interface User {
+  userId: string;
+  fullName: string;
+  email: string;
+  imageUrl: string;
+  phoneNumber: string;
+  deliveryAddress: string;
+}
+interface CustomJwtPayload extends JwtPayload {
+  userId: string;
+  fullName: string;
+  email: string;
+  imageUrl: string;
+  phoneNumber: string;
+  deliveryAddress: string;
+}
 const SignIn = () => {
-  const handleSignIn = async () => {
+  const { user, dispatch } = useAuthContext();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [successMessage, setSuccessMessage] = useState<string>();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const decodeJwtToken = (token: string): CustomJwtPayload | null => {
     try {
+      const decoded: CustomJwtPayload = jwtDecode(token);
+      return decoded;
     } catch (error) {
-      console.error("Sign in Error:", error);
+      console.error("Error decoding token: ", error);
+      return null;
+    }
+  };
+
+  const handleSignIn = async () => {
+    setIsLoading(true);
+
+    if (!formData.email || !formData.password) {
+      setErrorMessage("Please fill in both email and password.");
+      setTimeout(() => setErrorMessage(""), 3000);
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setErrorMessage("Password must be at least 8 characters long.");
+      setTimeout(() => setErrorMessage(""), 3000);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://bitebazaer.vercel.app/api/user/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        }
+      );
+
+      const result = await response.json();
+      if (!response.ok) {
+        setErrorMessage(result.message || "Failed to sign in");
+        setTimeout(() => setErrorMessage(""), 5000);
+        return;
+      }
+
+      const { token, registrationDate } = result;
+      const decodedToken: CustomJwtPayload | null = decodeJwtToken(token);
+      const user: User = {
+        userId: decodedToken?.userId || "",
+        fullName: decodedToken?.fullName || "",
+        email: decodedToken?.email || "",
+        imageUrl: decodedToken?.imageUrl || "",
+        phoneNumber: decodedToken?.phoneNumber || "",
+        deliveryAddress: decodedToken?.deliveryAddress || "",
+      };
+
+      dispatch({ type: "LOGIN", payload: user });
+      router.push("/menu");
+    } catch (error: any) {
+      setErrorMessage("Something went wrong. Please try again.");
+      console.error("Error during sign-in:", error);
+      setTimeout(() => setErrorMessage(""), 5000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -51,22 +144,74 @@ const SignIn = () => {
             </View>
           </View>
           <View style={styles.secondContainer}>
-            <Text style={styles.pageTitle}>Login</Text>
-            <View style={styles.loginContainer}>
+            <Text style={styles.title}>Login</Text>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                keyboardType="email-address"
+                value={formData.email}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, email: text })
+                }
+              />
+
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  secureTextEntry={!showPassword}
+                  value={formData.password}
+                  onChangeText={(text) =>
+                    setFormData({ ...formData, password: text })
+                  }
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIconContainer}
+                >
+                  <FontAwesome
+                    name={showPassword ? "eye-slash" : "eye"}
+                    size={18}
+                    color="#d1d5db"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={styles.loginButtonContainer}
+                style={styles.loginButton}
                 onPress={handleSignIn}
               >
-                <Image
-                  source={require("../../assets/images/googleIcon.png")}
-                  style={{ width: 24, height: 24 }}
-                  alt="google icon"
-                  resizeMode="contain"
-                />
-                <Text style={styles.loginButtonTitle}>
-                  Continue with Google
-                </Text>
+                {isLoading ? (
+                  <Spinner color={"#FFF"} />
+                ) : (
+                  <Text style={styles.loginButtonText}>Login with Email</Text>
+                )}
               </TouchableOpacity>
+            </View>
+
+            <View style={styles.messageContainer}>
+              {errorMessage && (
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
+              )}
+              {successMessage && (
+                <Text style={styles.successMessage}>{successMessage}</Text>
+              )}
+            </View>
+
+            <View style={styles.linkContainer}>
+              <Link href={"/forgot-password"} style={styles.link}>
+                Forgotten Password
+              </Link>
+              <Text style={styles.createAccountText}>
+                Don't have an account:{" "}
+                <Link href={"/register"} style={styles.link}>
+                  Create Account
+                </Link>
+              </Text>
             </View>
           </View>
         </View>
@@ -89,7 +234,7 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
     zIndex: 10,
-    height: "25%",
+    height: "20%",
   },
   header: {
     flexDirection: "row",
@@ -118,43 +263,93 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   secondContainer: {
-    borderTopRightRadius: 48,
-    borderTopLeftRadius: 48,
-    padding: 10,
-    backgroundColor: "#fff",
-    height: "100%",
+    width: "91%",
+    maxWidth: 400,
     flexDirection: "column",
-    gap: 32,
-    // justifyContent: "center",
+    gap: 8,
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 1,
+    backgroundColor: "#ffffff",
+    borderColor: "#d1d5db",
   },
-  pageTitle: {
-    color: "#3C2F2F",
-    fontSize: 30,
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
-    fontFamily: "rubik",
+    marginBottom: 8,
+    color: "#16423C",
+  },
+  inputContainer: {
+    flexDirection: "column",
+    gap: 16,
+  },
+  input: {
+    width: "100%",
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 25,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    position: "relative",
+  },
+  eyeIconContainer: {
+    position: "absolute",
+    right: 16,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  loginButton: {
+    backgroundColor: "#16423C",
+    padding: 16,
+    width: "100%",
+    borderRadius: 25,
+  },
+  loginButtonText: {
+    fontWeight: "bold",
+    color: "#FFE5CF",
+    textTransform: "uppercase",
     textAlign: "center",
   },
-  loginContainer: {
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-    backgroundColor: "#EF2A39",
-    borderRadius: 10,
-    padding: 30,
+  messageContainer: {
+    flexDirection: "column",
+    gap: 8,
   },
-  loginButtonContainer: {
-    backgroundColor: "#FFF",
-    padding: 10,
-    borderRadius: 10,
+  errorMessage: {
+    padding: 8,
+    width: "100%",
+    backgroundColor: "#FECACA",
+    color: "#B91C1C",
+    textAlign: "center",
+    borderRadius: 25,
     borderWidth: 1,
-    borderColor: "#d1d5db",
-    flexDirection: "row",
-    gap: 6,
-    alignItems: "center",
+    borderColor: "#B91C1C",
   },
-  loginButtonTitle: {
-    color: "#3C2F2F",
-    fontWeight: "semibold",
-    fontSize: 16,
-    fontFamily: "roboto",
+  successMessage: {
+    padding: 8,
+    width: "100%",
+    backgroundColor: "#BFDBFE", // Green background for success
+    color: "#1D4ED8", // Green text color
+    textAlign: "center",
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: "#1D4ED8",
+  },
+  linkContainer: {
+    flexDirection: "column",
+    paddingLeft: 8,
+  },
+  link: {
+    color: "#444444",
+    textDecorationLine: "underline",
+  },
+  createAccountText: {
+    color: "#444444",
   },
 });

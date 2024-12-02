@@ -243,14 +243,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF2A39",
     position: "relative",
     overflow: "hidden",
-    zIndex: 10,
     height: "20%",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    zIndex: 20,
+    zIndex: 5,
     paddingHorizontal: "4%",
     paddingTop: "2%",
   },
@@ -281,7 +280,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 32,
     position: "relative",
-    zIndex: 40,
   },
   imageContainer: {
     alignItems: "center",

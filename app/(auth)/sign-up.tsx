@@ -112,8 +112,8 @@ const SignUp = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" backgroundColor="#EF2A39" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 20 }}
         keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
         <View style={styles.innerContainer}>
           <View style={styles.firstContainer}>
@@ -299,16 +299,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF2A39",
     position: "relative",
     overflow: "hidden",
-    zIndex: 10,
     height: "20%",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    zIndex: 20,
     paddingHorizontal: 20,
     paddingTop: 10,
+    zIndex: 5,
   },
   backgroundImage: {
     position: "absolute",
@@ -337,7 +336,6 @@ const styles = StyleSheet.create({
     minHeight: "100%",
     flexDirection: "column",
     position: "relative",
-    zIndex: 20,
   },
   title: {
     fontSize: PixelRatio.getFontScale() * 26,

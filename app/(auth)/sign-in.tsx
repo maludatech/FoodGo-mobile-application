@@ -276,12 +276,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 48,
     borderTopLeftRadius: 48,
     padding: "4%",
+    gap: "2%",
     backgroundColor: "#fff",
     minHeight: "100%",
     flexDirection: "column",
-    gap: "4%",
     position: "relative",
-    zIndex: 40,
+    zIndex: 20,
   },
   title: {
     fontSize: PixelRatio.getFontScale() * 26,
@@ -289,6 +289,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: "center",
     color: "#3C2F2F",
+    fontFamily: "roboto",
   },
   inputContainer: {
     flexDirection: "column",
@@ -300,6 +301,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#d1d5db",
     borderRadius: 25,
+    fontFamily: "roboto",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -327,10 +329,11 @@ const styles = StyleSheet.create({
     color: "#FFF",
     textTransform: "uppercase",
     textAlign: "center",
+    fontFamily: "roboto",
   },
   messageContainer: {
     flexDirection: "column",
-    // gap: 8,
+    gap: "4%",
   },
   errorMessage: {
     padding: 8,
@@ -341,6 +344,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 1,
     borderColor: "#B91C1C",
+    fontFamily: "roboto",
   },
   successMessage: {
     padding: 8,
@@ -351,6 +355,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 1,
     borderColor: "#1D4ED8",
+    fontFamily: "roboto",
   },
   linkContainer: {
     flexDirection: "column",

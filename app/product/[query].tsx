@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
-    aspectRatio: 1.2,
+    aspectRatio: 1.4,
   },
   image: {
     width: "100%",

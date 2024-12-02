@@ -5,10 +5,11 @@ import {
   ImageBackground,
   TouchableOpacity,
   TextInput,
+  PixelRatio,
+  StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { router, Link } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
@@ -35,6 +36,8 @@ interface CustomJwtPayload extends JwtPayload {
 }
 const SignIn = () => {
   const { user, dispatch } = useAuthContext();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -64,6 +67,13 @@ const SignIn = () => {
       return;
     }
 
+    if (!emailRegex.test(formData.email)) {
+      setErrorMessage("Please enter a valid email address.");
+      setTimeout(() => setErrorMessage(""), 3000);
+      setIsLoading(false);
+      return;
+    }
+
     if (formData.password.length < 8) {
       setErrorMessage("Password must be at least 8 characters long.");
       setTimeout(() => setErrorMessage(""), 3000);
@@ -73,7 +83,7 @@ const SignIn = () => {
 
     try {
       const response = await fetch(
-        "https://bitebazaer.vercel.app/api/user/login",
+        "https://foodgo.vercel.app/api/auth/sign-in",
         {
           method: "POST",
           headers: {
@@ -93,7 +103,7 @@ const SignIn = () => {
         return;
       }
 
-      const { token, registrationDate } = result;
+      const { token } = result;
       const decodedToken: CustomJwtPayload | null = decodeJwtToken(token);
       const user: User = {
         userId: decodedToken?.userId || "",
@@ -105,7 +115,7 @@ const SignIn = () => {
       };
 
       dispatch({ type: "LOGIN", payload: user });
-      router.push("/menu");
+      router.push("/(tabs)");
     } catch (error: any) {
       setErrorMessage("Something went wrong. Please try again.");
       console.error("Error during sign-in:", error);
@@ -208,7 +218,7 @@ const SignIn = () => {
               </Link>
               <Text style={styles.createAccountText}>
                 Don't have an account:{" "}
-                <Link href={"/register"} style={styles.link}>
+                <Link href={"/sign-up"} style={styles.link}>
                   Create Account
                 </Link>
               </Text>
@@ -263,21 +273,22 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   secondContainer: {
-    width: "91%",
-    maxWidth: 400,
+    borderTopRightRadius: 48,
+    borderTopLeftRadius: 48,
+    padding: "4%",
+    backgroundColor: "#fff",
+    minHeight: "100%",
     flexDirection: "column",
-    gap: 8,
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    backgroundColor: "#ffffff",
-    borderColor: "#d1d5db",
+    gap: "4%",
+    position: "relative",
+    zIndex: 40,
   },
   title: {
-    fontSize: 24,
+    fontSize: PixelRatio.getFontScale() * 26,
     fontWeight: "bold",
     marginBottom: 8,
-    color: "#16423C",
+    textAlign: "center",
+    color: "#3C2F2F",
   },
   inputContainer: {
     flexDirection: "column",
@@ -306,20 +317,20 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   loginButton: {
-    backgroundColor: "#16423C",
+    backgroundColor: "#EF2A39",
     padding: 16,
     width: "100%",
     borderRadius: 25,
   },
   loginButtonText: {
     fontWeight: "bold",
-    color: "#FFE5CF",
+    color: "#FFF",
     textTransform: "uppercase",
     textAlign: "center",
   },
   messageContainer: {
     flexDirection: "column",
-    gap: 8,
+    // gap: 8,
   },
   errorMessage: {
     padding: 8,
@@ -334,8 +345,8 @@ const styles = StyleSheet.create({
   successMessage: {
     padding: 8,
     width: "100%",
-    backgroundColor: "#BFDBFE", // Green background for success
-    color: "#1D4ED8", // Green text color
+    backgroundColor: "#BFDBFE",
+    color: "#1D4ED8",
     textAlign: "center",
     borderRadius: 25,
     borderWidth: 1,
@@ -343,13 +354,18 @@ const styles = StyleSheet.create({
   },
   linkContainer: {
     flexDirection: "column",
+    gap: "4%",
     paddingLeft: 8,
   },
   link: {
     color: "#444444",
     textDecorationLine: "underline",
+    fontSize: PixelRatio.getFontScale() * 14,
+    fontFamily: "roboto",
   },
   createAccountText: {
     color: "#444444",
+    fontSize: PixelRatio.getFontScale() * 14,
+    fontFamily: "roboto",
   },
 });

@@ -19,7 +19,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useCartContext } from "@/context/CartContext";
 
 const Profile = () => {
-  const { user } = useAuthContext();
+  const { user, dispatch } = useAuthContext();
   const { clearCart } = useCartContext();
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const Profile = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      dispatch({ type: "LOGOUT" });
       clearCart();
     } catch (error) {
       Alert.alert(

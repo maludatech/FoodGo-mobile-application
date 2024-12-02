@@ -22,11 +22,11 @@ import { useAuthContext } from "@/context/AuthContext";
 export default function HomeScreen() {
   const { user } = useAuthContext();
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/(auth)/sign-in");
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (!user) {
+  //     router.push("/(auth)/sign-in");
+  //   }
+  // }, [user]);
 
   const { width: screenWidth } = Dimensions.get("window");
   const desiredColumnWidth = 150;

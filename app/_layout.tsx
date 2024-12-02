@@ -39,15 +39,15 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <AuthContextProvider>
+    <AuthContextProvider>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <CartProvider>
           <StatusBar style="light" />
-          <Stack>
+          <Stack screenOptions={{ headerShown: false }}>
             <Slot />
           </Stack>
         </CartProvider>
-      </AuthContextProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </AuthContextProvider>
   );
 }

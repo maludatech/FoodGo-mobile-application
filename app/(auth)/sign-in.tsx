@@ -7,6 +7,10 @@ import {
   TextInput,
   PixelRatio,
   StyleSheet,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -126,107 +130,120 @@ const SignIn = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" backgroundColor="#EF2A39" />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.innerContainer}>
-          <View style={styles.firstContainer}>
-            {/* Left and Right background images */}
-            <ImageBackground
-              source={require("../../assets/images/left-side.png")}
-              style={[styles.backgroundImage, styles.leftImage]}
-              resizeMode="contain"
-            />
-            <ImageBackground
-              source={require("../../assets/images/right-side.png")}
-              style={[styles.backgroundImage, styles.rightImage]}
-              resizeMode="contain"
-            />
-            <View style={styles.overlay}>
-              <View style={styles.header}>
-                <Icon
-                  name="arrow-left"
-                  color={"#fff"}
-                  size={24}
-                  onPress={() => router.back()}
+    <KeyboardAvoidingView
+      enabled={true}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.container}>
+          <StatusBar backgroundColor="#EF2A39" style="light" />
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.innerContainer}>
+              <View style={styles.firstContainer}>
+                {/* Left and Right background images */}
+                <ImageBackground
+                  source={require("../../assets/images/left-side.png")}
+                  style={[styles.backgroundImage, styles.leftImage]}
+                  resizeMode="contain"
                 />
+                <ImageBackground
+                  source={require("../../assets/images/right-side.png")}
+                  style={[styles.backgroundImage, styles.rightImage]}
+                  resizeMode="contain"
+                />
+                <View style={styles.overlay}>
+                  <View style={styles.header}>
+                    <Icon
+                      name="arrow-left"
+                      color={"#fff"}
+                      size={24}
+                      onPress={() => router.back()}
+                    />
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          <View style={styles.secondContainer}>
-            <Text style={styles.title}>Login</Text>
+              <View style={styles.secondContainer}>
+                <Text style={styles.title}>Login</Text>
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, email: text })
-                }
-              />
-
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Password"
-                  secureTextEntry={!showPassword}
-                  value={formData.password}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, password: text })
-                  }
-                />
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeIconContainer}
-                >
-                  <FontAwesome
-                    name={showPassword ? "eye-slash" : "eye"}
-                    size={18}
-                    color="#d1d5db"
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    keyboardType="email-address"
+                    value={formData.email}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, email: text })
+                    }
                   />
-                </TouchableOpacity>
+
+                  <View style={styles.passwordContainer}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Password"
+                      secureTextEntry={!showPassword}
+                      value={formData.password}
+                      onChangeText={(text) =>
+                        setFormData({ ...formData, password: text })
+                      }
+                    />
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                      style={styles.eyeIconContainer}
+                    >
+                      <FontAwesome
+                        name={showPassword ? "eye-slash" : "eye"}
+                        size={18}
+                        color="#d1d5db"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={handleSignIn}
+                  >
+                    {isLoading ? (
+                      <Spinner color={"#FFF"} />
+                    ) : (
+                      <Text style={styles.loginButtonText}>
+                        Login with Email
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.messageContainer}>
+                  {errorMessage && (
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
+                  )}
+                  {successMessage && (
+                    <Text style={styles.successMessage}>{successMessage}</Text>
+                  )}
+                </View>
+
+                <View style={styles.linkContainer}>
+                  <Link href={"/forgot-password"} style={styles.link}>
+                    Forgotten Password
+                  </Link>
+                  <Text style={styles.createAccountText}>
+                    Don't have an account:{" "}
+                    <Link href={"/sign-up"} style={styles.link}>
+                      Create Account
+                    </Link>
+                  </Text>
+                </View>
               </View>
             </View>
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={handleSignIn}
-              >
-                {isLoading ? (
-                  <Spinner color={"#FFF"} />
-                ) : (
-                  <Text style={styles.loginButtonText}>Login with Email</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.messageContainer}>
-              {errorMessage && (
-                <Text style={styles.errorMessage}>{errorMessage}</Text>
-              )}
-              {successMessage && (
-                <Text style={styles.successMessage}>{successMessage}</Text>
-              )}
-            </View>
-
-            <View style={styles.linkContainer}>
-              <Link href={"/forgot-password"} style={styles.link}>
-                Forgotten Password
-              </Link>
-              <Text style={styles.createAccountText}>
-                Don't have an account:{" "}
-                <Link href={"/sign-up"} style={styles.link}>
-                  Create Account
-                </Link>
-              </Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </ScrollView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 export default SignIn;
@@ -277,6 +294,7 @@ const styles = StyleSheet.create({
     padding: "4%",
     gap: "2%",
     backgroundColor: "#fff",
+    flex: 1,
     minHeight: "100%",
     flexDirection: "column",
     position: "relative",

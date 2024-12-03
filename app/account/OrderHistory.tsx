@@ -20,7 +20,7 @@ const OrderHistory = () => {
   const { user, dispatch } = useAuthContext();
   const { clearCart } = useCartContext();
 
-  const email = user?.email;
+  const userId = user?.userId;
 
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +33,7 @@ const OrderHistory = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://food-go-backend.vercel.app/api/user/order-history/${email}`
+        `https://food-go-backend.vercel.app/api/user/order-history/${userId}`
       );
       if (response.ok) {
         const data = await response.json();

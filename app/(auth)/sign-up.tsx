@@ -5,6 +5,10 @@ import {
   ImageBackground,
   TouchableOpacity,
   PixelRatio,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -106,177 +110,195 @@ const SignUp = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" backgroundColor="#EF2A39" />
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <View style={styles.innerContainer}>
-          <View style={styles.firstContainer}>
-            {/* Left and Right background images */}
-            <ImageBackground
-              source={require("../../assets/images/left-side.png")}
-              style={[styles.backgroundImage, styles.leftImage]}
-              resizeMode="contain"
-            />
-            <ImageBackground
-              source={require("../../assets/images/right-side.png")}
-              style={[styles.backgroundImage, styles.rightImage]}
-              resizeMode="contain"
-            />
-            <View style={styles.overlay}>
-              <View style={styles.header}>
-                <Icon
-                  name="arrow-left"
-                  color={"#fff"}
-                  size={24}
-                  onPress={() => router.back()}
+    <KeyboardAvoidingView
+      enabled={true}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.container}>
+          <StatusBar backgroundColor="#EF2A39" style="light" />
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.innerContainer}>
+              <View style={styles.firstContainer}>
+                {/* Left and Right background images */}
+                <ImageBackground
+                  source={require("../../assets/images/left-side.png")}
+                  style={[styles.backgroundImage, styles.leftImage]}
+                  resizeMode="contain"
                 />
+                <ImageBackground
+                  source={require("../../assets/images/right-side.png")}
+                  style={[styles.backgroundImage, styles.rightImage]}
+                  resizeMode="contain"
+                />
+                <View style={styles.overlay}>
+                  <View style={styles.header}>
+                    <Icon
+                      name="arrow-left"
+                      color={"#fff"}
+                      size={24}
+                      onPress={() => router.back()}
+                    />
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          <View style={styles.secondContainer}>
-            <Text style={styles.title}>Sign Up</Text>
+              <View style={styles.secondContainer}>
+                <Text style={styles.title}>Sign Up</Text>
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, email: text })
-                }
-              />
-
-              <TextInput
-                style={styles.input}
-                placeholder="Full Name"
-                value={formData.fullName}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, fullName: text })
-                }
-              />
-
-              <TextInput
-                style={styles.input}
-                placeholder="Delivery Address"
-                value={formData.deliveryAddress}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, deliveryAddress: text })
-                }
-              />
-
-              <TextInput
-                style={styles.input}
-                placeholder="Phone Number"
-                value={formData.phoneNumber}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, phoneNumber: text })
-                }
-              />
-
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Password"
-                  secureTextEntry={!showPassword}
-                  value={formData.password}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, password: text })
-                  }
-                />
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeIcon}
-                >
-                  <FontAwesome
-                    name={showPassword ? "eye-slash" : "eye"}
-                    size={18}
-                    color="#d1d5db"
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    keyboardType="email-address"
+                    value={formData.email}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, email: text })
+                    }
                   />
-                </TouchableOpacity>
-              </View>
 
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Confirm Password"
-                  secureTextEntry={!showConfirmPassword}
-                  value={formData.confirmPassword}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, confirmPassword: text })
-                  }
-                />
-                <TouchableOpacity
-                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                  style={styles.eyeIcon}
-                >
-                  <FontAwesome
-                    name={showConfirmPassword ? "eye-slash" : "eye"}
-                    size={18}
-                    color="#d1d5db"
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Full Name"
+                    value={formData.fullName}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, fullName: text })
+                    }
                   />
-                </TouchableOpacity>
+
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Delivery Address"
+                    value={formData.deliveryAddress}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, deliveryAddress: text })
+                    }
+                  />
+
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Phone Number"
+                    value={formData.phoneNumber}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, phoneNumber: text })
+                    }
+                  />
+
+                  <View style={styles.passwordContainer}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Password"
+                      secureTextEntry={!showPassword}
+                      value={formData.password}
+                      onChangeText={(text) =>
+                        setFormData({ ...formData, password: text })
+                      }
+                    />
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                      style={styles.eyeIcon}
+                    >
+                      <FontAwesome
+                        name={showPassword ? "eye-slash" : "eye"}
+                        size={18}
+                        color="#d1d5db"
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.passwordContainer}>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Confirm Password"
+                      secureTextEntry={!showConfirmPassword}
+                      value={formData.confirmPassword}
+                      onChangeText={(text) =>
+                        setFormData({ ...formData, confirmPassword: text })
+                      }
+                    />
+                    <TouchableOpacity
+                      onPress={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      style={styles.eyeIcon}
+                    >
+                      <FontAwesome
+                        name={showConfirmPassword ? "eye-slash" : "eye"}
+                        size={18}
+                        color="#d1d5db"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={handleSignUp}
+                  >
+                    {isLoading ? (
+                      <Spinner color={"#FFE5CF"} />
+                    ) : (
+                      <Text style={styles.buttonText}>Sign Up with Email</Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.messageContainer}>
+                  {errorMessage && (
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
+                  )}
+                  {successMessage && (
+                    <Text style={styles.successMessage}>{successMessage}</Text>
+                  )}
+                </View>
+
+                <View style={styles.policyContainer}>
+                  <Text>
+                    By creating an account, you automatically accept our
+                  </Text>
+                  <Text>
+                    <Link
+                      href={"https://bitebazaer.vercel.app/terms-of-service"}
+                      style={styles.link}
+                    >
+                      Terms of Service
+                    </Link>
+                    ,
+                    <Link
+                      href={"https://bitebazaer.vercel.app/privacy-policy"}
+                      style={styles.link}
+                    >
+                      Privacy Policy
+                    </Link>
+                    ,&
+                    <Link
+                      href={"https://bitebazaer.vercel.app/cookie-policy"}
+                      style={styles.link}
+                    >
+                      Cookie Policy
+                    </Link>
+                    .
+                  </Text>
+                </View>
+
+                <View style={styles.loginPrompt}>
+                  <Text>
+                    Already have an account:{" "}
+                    <Link href={"/(auth)/sign-in"} style={styles.link}>
+                      Login
+                    </Link>
+                  </Text>
+                </View>
               </View>
             </View>
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-                {isLoading ? (
-                  <Spinner color={"#FFE5CF"} />
-                ) : (
-                  <Text style={styles.buttonText}>Sign Up with Email</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.messageContainer}>
-              {errorMessage && (
-                <Text style={styles.errorMessage}>{errorMessage}</Text>
-              )}
-              {successMessage && (
-                <Text style={styles.successMessage}>{successMessage}</Text>
-              )}
-            </View>
-
-            <View style={styles.policyContainer}>
-              <Text>By creating an account, you automatically accept our</Text>
-              <Text>
-                <Link
-                  href={"https://bitebazaer.vercel.app/terms-of-service"}
-                  style={styles.link}
-                >
-                  Terms of Service
-                </Link>
-                ,
-                <Link
-                  href={"https://bitebazaer.vercel.app/privacy-policy"}
-                  style={styles.link}
-                >
-                  Privacy Policy
-                </Link>
-                ,&
-                <Link
-                  href={"https://bitebazaer.vercel.app/cookie-policy"}
-                  style={styles.link}
-                >
-                  Cookie Policy
-                </Link>
-                .
-              </Text>
-            </View>
-
-            <View style={styles.loginPrompt}>
-              <Text>
-                Already have an account:{" "}
-                <Link href={"/(auth)/sign-in"} style={styles.link}>
-                  Login
-                </Link>
-              </Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </ScrollView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 export default SignUp;

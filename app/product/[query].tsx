@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Image,
+  PixelRatio,
+} from "react-native";
 import React, { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -264,8 +271,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   quantityControlButtons: {
-    paddingHorizontal: 16,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 3,
     backgroundColor: "#EF2A39",
     alignItems: "center",
     justifyContent: "center",
@@ -300,18 +307,18 @@ const styles = StyleSheet.create({
   },
   totalButton: {
     backgroundColor: "#EF2A39",
-    padding: 16,
+    padding: 12,
     borderRadius: 12,
   },
   orderButton: {
     backgroundColor: "#3C2F2F",
     width: "70%",
-    padding: 16,
+    padding: 12,
     borderRadius: 12,
   },
   ButtonText: {
     fontFamily: "roboto",
-    fontSize: 18,
+    fontSize: PixelRatio.getFontScale() * 16,
     fontWeight: "semibold",
     color: "#FFF",
     textAlign: "center",

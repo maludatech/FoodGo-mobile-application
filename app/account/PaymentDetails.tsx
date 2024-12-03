@@ -20,8 +20,9 @@ import { useCartContext } from "@/context/CartContext";
 
 const PaymentDetails = () => {
   const { user, dispatch } = useAuthContext();
-  const email = user?.email;
   const { clearCart } = useCartContext();
+
+  const userId = user?.userId;
 
   const [cards, setCards] = useState([]);
   const [cardNumber, setCardNumber] = useState("");
@@ -29,13 +30,13 @@ const PaymentDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (email) fetchCards();
-  }, [email]);
+    fetchCards();
+  }, []);
 
   const fetchCards = async () => {
     try {
       const response = await fetch(
-        `https://your-api.com/api/user/cards/${email}`
+        `https://your-api.com/api/user/cards/${userId}`
       );
       if (response.ok) {
         const result = await response.json();
@@ -55,7 +56,7 @@ const PaymentDetails = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://your-api.com/api/user/cards/${email}`,
+        `https://your-api.com/api/user/cards/${userId}`,
         {
           method: "POST",
           body: JSON.stringify({ cardNumber, cardType }),
@@ -81,7 +82,7 @@ const PaymentDetails = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://your-api.com/api/user/cards/${email}/${cardId}`,
+        `https://food-go-backend.vercel.app/api/user/payment-card/${userId}`,
         { method: "DELETE" }
       );
       if (response.ok) {

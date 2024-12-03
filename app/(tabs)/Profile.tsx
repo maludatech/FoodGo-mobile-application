@@ -29,6 +29,9 @@ const Profile = () => {
   useEffect(() => {
     if (!user) {
       router.push("/(auth)/sign-in");
+    } else {
+      setDeliveryAddress(user.deliveryAddress || "");
+      setPhoneNumber(user.phoneNumber || "");
     }
   }, [user]);
 
@@ -164,7 +167,7 @@ const Profile = () => {
                 <TextInput
                   style={[
                     styles.input,
-                    !user?.fullName && styles.inputNonEditable,
+                    user?.fullName && styles.inputNonEditable,
                   ]}
                   value={user?.fullName}
                   editable={false}
@@ -173,10 +176,7 @@ const Profile = () => {
               <View style={styles.formContents}>
                 <Text style={styles.label}>Email</Text>
                 <TextInput
-                  style={[
-                    styles.input,
-                    !user?.email && styles.inputNonEditable,
-                  ]}
+                  style={[styles.input, user?.email && styles.inputNonEditable]}
                   value={user?.email}
                   editable={false}
                 />
@@ -185,7 +185,7 @@ const Profile = () => {
                 <Text style={styles.label}>Delivery Address</Text>
                 <TextInput
                   style={styles.input}
-                  defaultValue={user?.deliveryAddress}
+                  value={deliveryAddress}
                   onChangeText={(text) => setDeliveryAddress(text)}
                 />
               </View>
@@ -193,7 +193,7 @@ const Profile = () => {
                 <Text style={styles.label}>Phone Number</Text>
                 <TextInput
                   style={styles.input}
-                  defaultValue={user?.phoneNumber}
+                  value={phoneNumber}
                   onChangeText={(text) => setPhoneNumber(text)}
                 />
               </View>
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   inputNonEditable: {
-    backgroundColor: "#CBD5E1",
+    backgroundColor: "#E2E8F0",
   },
   passwordContainer: {
     flexDirection: "row",

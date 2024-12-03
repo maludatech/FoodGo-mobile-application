@@ -60,7 +60,11 @@ export default function HomeScreen() {
               <Text style={styles.subtitle}>Order your favourite food!</Text>
             </View>
             <Image
-              source={{ uri: user?.imageUrl }}
+              source={
+                user?.imageUrl
+                  ? { uri: user?.imageUrl }
+                  : require("../../assets/images/userImage.jpg")
+              }
               style={{
                 width: 70,
                 height: 70,

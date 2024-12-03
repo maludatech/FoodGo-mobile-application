@@ -17,15 +17,6 @@ import { useAuthContext } from "@/context/AuthContext";
 import Spinner from "@/components/Spinner";
 import { TextInput } from "react-native";
 
-interface User {
-  userId: string;
-  fullName: string;
-  email: string;
-  imageUrl: string;
-  phoneNumber: string;
-  deliveryAddress: string;
-}
-
 const SignUp = () => {
   const { user } = useAuthContext();
 
@@ -68,6 +59,10 @@ const SignUp = () => {
     if (password !== confirmPassword) {
       return "Passwords do not match.";
     }
+    if (!/^\d{11}$/.test(phoneNumber)) {
+      return "Phone number must be 11 digits.";
+    }
+
     return null;
   };
 
@@ -83,7 +78,7 @@ const SignUp = () => {
 
     try {
       const response = await fetch(
-        "https://foodgo.vercel.app/api/auth/sign-up",
+        "https://food-go-backend.vercel.app/api/auth/sign-up",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -98,7 +93,9 @@ const SignUp = () => {
         return;
       }
 
-      router.push("/(tabs)");
+      setSuccessMessage("User created successfully");
+      setTimeout(() => setSuccessMessage(""), 3000);
+      router.push("/(auth)/sign-in");
     } catch (error) {
       console.error("Error during registration:", error);
       setErrorMessage("Something went wrong. Please try again.");
@@ -111,10 +108,7 @@ const SignUp = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" backgroundColor="#EF2A39" />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 40 }}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.innerContainer}>
           <View style={styles.firstContainer}>
             {/* Left and Right background images */}
@@ -353,7 +347,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: "#d1d5db",
-    borderRadius: 25,
+    borderRadius: 16,
     fontFamily: "roboto",
   },
   passwordContainer: {
@@ -375,7 +369,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF2A39",
     padding: 16,
     width: "100%",
-    borderRadius: 30,
+    borderRadius: 16,
   },
   buttonText: {
     fontWeight: "bold",
@@ -421,13 +415,13 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   link: {
-    color: "#444444",
+    color: "#3C2F2F",
     textDecorationLine: "underline",
     fontSize: PixelRatio.getFontScale() * 14,
     fontFamily: "roboto",
   },
   createAccountText: {
-    color: "#444444",
+    color: "#3C2F2F",
     fontSize: PixelRatio.getFontScale() * 14,
     fontFamily: "roboto",
   },

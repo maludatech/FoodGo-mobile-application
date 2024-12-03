@@ -9,14 +9,18 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { router, Redirect } from "expo-router";
+import { router } from "expo-router";
 import { useAuthContext } from "@/context/AuthContext";
 import { useCartContext } from "@/context/CartContext";
+
+const screenHeight = Dimensions.get("window").height;
 
 const Profile = () => {
   const { user, dispatch } = useAuthContext();
@@ -29,29 +33,26 @@ const Profile = () => {
   }, [user]);
 
   const userId = user?.userId;
-  const [deliveryAddress, setDeliveryAddress] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const fetchUserDetails = async () => {
-    try {
-      const response = await fetch(
-        `https://food-go-backend.vercel.app/api/user/profile/${userId}`
-      );
-      if (response.ok) {
-        const result = await response.json();
-        setDeliveryAddress(result.deliveryAddress);
-      }
-    } catch (error) {
-      console.error("Fetch User details error: ", error);
-    }
-  };
+  const [deliveryAddress, setDeliveryAddress] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const updateUserDetails = async () => {
     if (!deliveryAddress.trim()) {
-      // Validate that deliveryAddress is not empty
+      Alert.alert("Validation Error", "Please provide a delivery address.");
+      return;
+    }
+    if (phoneNumber.trim().length < 10) {
+      Alert.alert("Validation Error", "Enter a valid phone number.");
+      return;
+    }
+    if (password && password.length < 6) {
       Alert.alert(
         "Validation Error",
-        "Delivery address cannot be empty. Please provide a valid address."
+        "Password must be at least 6 characters."
       );
       return;
     }
@@ -62,7 +63,7 @@ const Profile = () => {
         `https://food-go-backend.vercel.app/api/user/profile/${userId}`,
         {
           method: "PATCH",
-          body: JSON.stringify({ deliveryAddress }),
+          body: JSON.stringify({ deliveryAddress, phoneNumber, password }),
           headers: { "Content-Type": "application/json" },
         }
       );
@@ -88,10 +89,6 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserDetails();
-  }, [user]);
-
   const handleSignOut = async () => {
     try {
       dispatch({ type: "LOGOUT" });
@@ -108,7 +105,10 @@ const Profile = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#EF2A39" style="light" />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.innerContainer}>
           <View style={styles.firstContainer}>
             {/* Left and Right background images */}
@@ -142,12 +142,16 @@ const Profile = () => {
           <View style={styles.secondContainer}>
             <View style={styles.imageContainer}>
               <Image
-                source={{ uri: user?.imageUrl }}
+                source={
+                  user?.imageUrl
+                    ? { uri: user?.imageUrl }
+                    : require("../../assets/images/userImage.jpg")
+                }
                 style={{
                   width: 100,
                   height: 100,
                   borderRadius: 16,
-                  borderWidth: 4,
+                  borderWidth: 2,
                   borderColor: "#EF2A39",
                   position: "absolute",
                   zIndex: 20,
@@ -158,15 +162,21 @@ const Profile = () => {
               <View style={styles.formContents}>
                 <Text style={styles.label}>Name</Text>
                 <TextInput
-                  style={styles.input}
-                  value={user?.fullName as string}
+                  style={[
+                    styles.input,
+                    !user?.fullName && styles.inputNonEditable,
+                  ]}
+                  value={user?.fullName}
                   editable={false}
                 />
               </View>
               <View style={styles.formContents}>
                 <Text style={styles.label}>Email</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    !user?.email && styles.inputNonEditable,
+                  ]}
                   value={user?.email}
                   editable={false}
                 />
@@ -175,9 +185,35 @@ const Profile = () => {
                 <Text style={styles.label}>Delivery Address</Text>
                 <TextInput
                   style={styles.input}
-                  value={deliveryAddress}
+                  defaultValue={user?.deliveryAddress}
                   onChangeText={(text) => setDeliveryAddress(text)}
                 />
+              </View>
+              <View style={styles.formContents}>
+                <Text style={styles.label}>Phone Number</Text>
+                <TextInput
+                  style={styles.input}
+                  defaultValue={user?.phoneNumber}
+                  onChangeText={(text) => setPhoneNumber(text)}
+                />
+              </View>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  secureTextEntry={!showPassword}
+                  onChangeText={(text) => setPassword(text)}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIconContainer}
+                >
+                  <FontAwesome
+                    name={showPassword ? "eye-slash" : "eye"}
+                    size={18}
+                    color="#d1d5db"
+                  />
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.moreInfoContainer}>
@@ -232,6 +268,7 @@ export default Profile;
 
 const styles = StyleSheet.create({
   container: {
+    height: screenHeight,
     flex: 1,
     backgroundColor: "#EF2A39",
   },
@@ -278,7 +315,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     minHeight: "100%",
     flexDirection: "column",
-    gap: 32,
+    gap: "2%",
     position: "relative",
   },
   imageContainer: {
@@ -289,12 +326,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 3,
+    position: "relative",
   },
   formContainer: {
     flexDirection: "column",
-    gap: 20,
+    gap: "4%",
     paddingHorizontal: "4%",
-    paddingTop: "10%",
+    paddingTop: "15%",
   },
   formContents: {
     flexDirection: "column",
@@ -316,6 +354,7 @@ const styles = StyleSheet.create({
     color: "#3C2F2F",
     fontWeight: "700",
     fontFamily: "roboto",
+    width: "100%",
     fontSize: 14,
     backgroundColor: "#FFF",
     shadowColor: "#000",
@@ -323,6 +362,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 1,
+  },
+  inputNonEditable: {
+    backgroundColor: "#CBD5E1",
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    position: "relative",
+  },
+  eyeIconContainer: {
+    position: "absolute",
+    right: 16,
   },
   moreInfoContainer: {
     flexDirection: "column",

@@ -83,7 +83,7 @@ const SignIn = () => {
 
     try {
       const response = await fetch(
-        "https://foodgo.vercel.app/api/auth/sign-in",
+        "https://food-go-backend.vercel.app/api/auth/sign-in",
         {
           method: "POST",
           headers: {
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: "#d1d5db",
-    borderRadius: 25,
+    borderRadius: 16,
     fontFamily: "roboto",
   },
   passwordContainer: {
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF2A39",
     padding: 16,
     width: "100%",
-    borderRadius: 25,
+    borderRadius: 16,
   },
   loginButtonText: {
     fontWeight: "bold",
@@ -357,18 +357,18 @@ const styles = StyleSheet.create({
   },
   linkContainer: {
     flexDirection: "column",
-    gap: "4%",
+    gap: "6",
     paddingLeft: 8,
   },
   link: {
-    color: "#444444",
+    color: "#3C2F2F",
     textDecorationLine: "underline",
-    fontSize: PixelRatio.getFontScale() * 14,
+    fontSize: PixelRatio.getFontScale() * 15,
     fontFamily: "roboto",
   },
   createAccountText: {
-    color: "#444444",
-    fontSize: PixelRatio.getFontScale() * 14,
+    color: "#3C2F2F",
+    fontSize: PixelRatio.getFontScale() * 15,
     fontFamily: "roboto",
   },
 });

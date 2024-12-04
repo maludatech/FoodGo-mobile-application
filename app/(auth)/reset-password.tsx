@@ -7,71 +7,100 @@ import {
   TextInput,
   PixelRatio,
   StyleSheet,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { router, Link } from "expo-router";
+import { router } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
 import { useAuthContext } from "@/context/AuthContext";
 import Spinner from "@/components/Spinner";
 
-const ForgotPassword = () => {
-  const { user, dispatch } = useAuthContext();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ResetPassword = () => {
+  const { user } = useAuthContext();
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [successMessage, setSuccessMessage] = useState<string>();
-  const [email, setEmail] = useState<string>();
+  useEffect(() => {
+    if (user) {
+      router.push("/(tabs)");
+    }
+  }, [user]);
 
-  const handleSubmit = async () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [code, setCode] = useState(Array(6).fill(""));
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+
+  // Enable button only if all input fields are filled
+  useEffect(() => {
+    setIsButtonEnabled(code.every((digit) => digit !== ""));
+  }, [code]);
+
+  // Handle input changes, including backspace navigation
+  const handleInputChange = (e: any, index: any) => {
+    const value = e.target.value;
+    if (value.length > 1) return;
+
+    const newCode = [...code];
+    newCode[index] = value;
+    setCode(newCode);
+
+    if (value && index < 5) {
+      // Move focus to the next input
+      const nextInput = document.getElementById(`code-input-${index + 1}`);
+      if (nextInput) {
+        nextInput.focus();
+      }
+    } else if (!value && index > 0) {
+      // Move focus to the previous input on backspace
+      const prevInput = document.getElementById(`code-input-${index - 1}`);
+      if (prevInput) {
+        prevInput.focus();
+      }
+    }
+  };
+
+  // Handle pasting a 6-digit code
+  const handlePaste = (e: any) => {
+    const paste = e.clipboardData.getData("text").slice(0, 6).split("");
+    setCode(paste);
+
+    // Set focus to the first empty input or the last one
+    const firstEmptyIndex = paste.findIndex((char: any) => char === "");
+    const nextInput = document.getElementById(
+      `code-input-${firstEmptyIndex >= 0 ? firstEmptyIndex : 5}`
+    );
+    if (nextInput) {
+      nextInput.focus();
+    }
+  };
+
+  // Handle submission of the 6-digit code
+  const handleContinue = async () => {
     setIsLoading(true);
+    if (!isButtonEnabled) return;
 
-    if (!email) {
-      setErrorMessage("Please fill in your email");
-      setTimeout(() => setErrorMessage(""), 3000);
-      setIsLoading(false);
-      return;
-    }
-
-    if (!emailRegex.test(email)) {
-      setErrorMessage("Please enter a valid email address.");
-      setTimeout(() => setErrorMessage(""), 3000);
-      setIsLoading(false);
-      return;
-    }
-
+    const restoreCode = code.join("");
     try {
       const response = await fetch(
-        "https://food-go-backend.vercel.app/api/auth/forgot-password",
+        "https://food-go-backend.vercel.app/api/auth/restore-password",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: restoreCode }),
         }
       );
 
-      const result = await response.json();
-      if (!response.ok) {
-        setErrorMessage(result.message || "An error occurred");
-        setTimeout(() => setErrorMessage(""), 3000);
+      if (response.ok) {
+        const { userId } = await response.json();
+        router.replace(`/(auth)/reset-password?userId=${userId}`);
       } else {
-        setSuccessMessage(result.message || "Password reset email sent!");
-        setTimeout(() => setSuccessMessage(""), 3000);
-        router.replace("/restore-password");
+        const data = await response.json();
+        setErrorMessage(data.message);
+        setTimeout(() => setErrorMessage(""), 3000);
       }
-    } catch (error: any) {
-      setErrorMessage("An error occurred");
+    } catch (error) {
+      console.error("Error during fetch:", error);
+      setErrorMessage("Internal server error");
       setTimeout(() => setErrorMessage(""), 3000);
     } finally {
       setIsLoading(false);
@@ -79,85 +108,67 @@ const ForgotPassword = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      enabled={true}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={styles.container}>
-          <StatusBar backgroundColor="#EF2A39" style="light" />
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.innerContainer}>
-              <View style={styles.firstContainer}>
-                {/* Left and Right background images */}
-                <ImageBackground
-                  source={require("../../assets/images/left-side.png")}
-                  style={[styles.backgroundImage, styles.leftImage]}
-                  resizeMode="contain"
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#EF2A39" style="light" />
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.innerContainer}>
+          <View style={styles.firstContainer}>
+            {/* Left and Right background images */}
+            <ImageBackground
+              source={require("../../assets/images/left-side.png")}
+              style={[styles.backgroundImage, styles.leftImage]}
+              resizeMode="contain"
+            />
+            <ImageBackground
+              source={require("../../assets/images/right-side.png")}
+              style={[styles.backgroundImage, styles.rightImage]}
+              resizeMode="contain"
+            />
+            <View style={styles.overlay}>
+              <View style={styles.header}>
+                <Icon
+                  name="arrow-left"
+                  color={"#fff"}
+                  size={24}
+                  onPress={() => router.back()}
                 />
-                <ImageBackground
-                  source={require("../../assets/images/right-side.png")}
-                  style={[styles.backgroundImage, styles.rightImage]}
-                  resizeMode="contain"
-                />
-                <View style={styles.overlay}>
-                  <View style={styles.header}>
-                    <Icon
-                      name="arrow-left"
-                      color={"#fff"}
-                      size={24}
-                      onPress={() => router.back()}
-                    />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.secondContainer}>
-                <Text style={styles.title}>Reset Password</Text>
-
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    keyboardType="email-address"
-                    value={email}
-                    onChangeText={(text) => setEmail(text)}
-                  />
-                </View>
-
-                <View style={styles.buttonContainer}>
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleSubmit}
-                  >
-                    {isLoading ? (
-                      <Spinner color={"#FFF"} />
-                    ) : (
-                      <Text style={styles.buttonText}>Submit</Text>
-                    )}
-                  </TouchableOpacity>
-                </View>
-
-                <View style={styles.messageContainer}>
-                  {errorMessage && (
-                    <Text style={styles.errorMessage}>{errorMessage}</Text>
-                  )}
-                  {successMessage && (
-                    <Text style={styles.successMessage}>{successMessage}</Text>
-                  )}
-                </View>
               </View>
             </View>
-          </ScrollView>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </View>
+          <View style={styles.secondContainer}>
+            <Text style={styles.title}>Reset Password</Text>
+
+            <Text style={styles.subTitle}>
+              Enter the six-digit code sent to your email
+            </Text>
+
+            <View style={styles.inputContainer}></View>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={handleContinue}>
+                {isLoading ? (
+                  <Spinner color={"#FFF"} />
+                ) : (
+                  <Text style={styles.buttonText}>Continue</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.messageContainer}>
+              {errorMessage && (
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
+              )}
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
-export default ForgotPassword;
+export default ResetPassword;
 
 const styles = StyleSheet.create({
   container: {
@@ -217,6 +228,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#3C2F2F",
     fontFamily: "roboto",
+  },
+  subTitle: {
+    color: "#3C2F2F",
+    fontFamily: "roboto",
+    fontWeight: "semibold",
+    fontSize: PixelRatio.getFontScale() * 14,
   },
   inputContainer: {
     flexDirection: "column",
@@ -282,22 +299,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 1,
     borderColor: "#1D4ED8",
-    fontFamily: "roboto",
-  },
-  linkContainer: {
-    flexDirection: "column",
-    gap: "6",
-    paddingLeft: 8,
-  },
-  link: {
-    color: "#3C2F2F",
-    textDecorationLine: "underline",
-    fontSize: PixelRatio.getFontScale() * 15,
-    fontFamily: "roboto",
-  },
-  createAccountText: {
-    color: "#3C2F2F",
-    fontSize: PixelRatio.getFontScale() * 15,
     fontFamily: "roboto",
   },
 });

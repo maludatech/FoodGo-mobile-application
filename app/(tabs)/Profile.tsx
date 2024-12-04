@@ -9,10 +9,6 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -132,174 +128,163 @@ const Profile = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      enabled={true}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={styles.container}>
-          <StatusBar backgroundColor="#EF2A39" style="light" />
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.innerContainer}>
-              <View style={styles.firstContainer}>
-                {/* Left and Right background images */}
-                <ImageBackground
-                  source={require("../../assets/images/left-side.png")}
-                  style={[styles.backgroundImage, styles.leftImage]}
-                  resizeMode="contain"
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#EF2A39" style="light" />
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.innerContainer}>
+          <View style={styles.firstContainer}>
+            {/* Left and Right background images */}
+            <ImageBackground
+              source={require("../../assets/images/left-side.png")}
+              style={[styles.backgroundImage, styles.leftImage]}
+              resizeMode="contain"
+            />
+            <ImageBackground
+              source={require("../../assets/images/right-side.png")}
+              style={[styles.backgroundImage, styles.rightImage]}
+              resizeMode="contain"
+            />
+            <View style={styles.overlay}>
+              <View style={styles.header}>
+                <Icon
+                  name="arrow-left"
+                  color={"#fff"}
+                  size={20}
+                  onPress={() => router.back()}
                 />
-                <ImageBackground
-                  source={require("../../assets/images/right-side.png")}
-                  style={[styles.backgroundImage, styles.rightImage]}
-                  resizeMode="contain"
+                <Icon
+                  name="log-out"
+                  color={"#fff"}
+                  size={20}
+                  onPress={handleSignOut}
                 />
-                <View style={styles.overlay}>
-                  <View style={styles.header}>
-                    <Icon
-                      name="arrow-left"
-                      color={"#fff"}
-                      size={20}
-                      onPress={() => router.back()}
-                    />
-                    <Icon
-                      name="log-out"
-                      color={"#fff"}
-                      size={20}
-                      onPress={handleSignOut}
-                    />
-                  </View>
-                </View>
               </View>
-              <View style={styles.secondContainer}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={
-                      user?.imageUrl
-                        ? { uri: user?.imageUrl }
-                        : require("../../assets/images/userImage.jpg")
-                    }
-                    style={{
-                      width: 100,
-                      height: 100,
-                      borderRadius: 16,
-                      borderWidth: 2,
-                      borderColor: "#EF2A39",
-                      position: "absolute",
-                      zIndex: 20,
-                    }}
+            </View>
+          </View>
+          <View style={styles.secondContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={
+                  user?.imageUrl
+                    ? { uri: user?.imageUrl }
+                    : require("../../assets/images/userImage.jpg")
+                }
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 16,
+                  borderWidth: 2,
+                  borderColor: "#EF2A39",
+                  position: "absolute",
+                  zIndex: 20,
+                }}
+              />
+            </View>
+            <View style={styles.formContainer}>
+              <View style={styles.formContents}>
+                <Text style={styles.label}>Name</Text>
+                <TextInput
+                  style={[
+                    styles.input,
+                    user?.fullName && styles.inputNonEditable,
+                  ]}
+                  value={user?.fullName}
+                  editable={false}
+                />
+              </View>
+              <View style={styles.formContents}>
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                  style={[styles.input, user?.email && styles.inputNonEditable]}
+                  value={user?.email}
+                  editable={false}
+                />
+              </View>
+              <View style={styles.formContents}>
+                <Text style={styles.label}>Delivery Address</Text>
+                <TextInput
+                  style={styles.input}
+                  value={deliveryAddress}
+                  onChangeText={(text) => setDeliveryAddress(text)}
+                />
+              </View>
+              <View style={styles.formContents}>
+                <Text style={styles.label}>Phone Number</Text>
+                <TextInput
+                  style={styles.input}
+                  value={phoneNumber}
+                  onChangeText={(text) => setPhoneNumber(text)}
+                />
+              </View>
+              <View style={styles.formContents}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.input}
+                    secureTextEntry={!showPassword}
+                    onChangeText={(text) => setPassword(text)}
                   />
-                </View>
-                <View style={styles.formContainer}>
-                  <View style={styles.formContents}>
-                    <Text style={styles.label}>Name</Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        user?.fullName && styles.inputNonEditable,
-                      ]}
-                      value={user?.fullName}
-                      editable={false}
-                    />
-                  </View>
-                  <View style={styles.formContents}>
-                    <Text style={styles.label}>Email</Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        user?.email && styles.inputNonEditable,
-                      ]}
-                      value={user?.email}
-                      editable={false}
-                    />
-                  </View>
-                  <View style={styles.formContents}>
-                    <Text style={styles.label}>Delivery Address</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={deliveryAddress}
-                      onChangeText={(text) => setDeliveryAddress(text)}
-                    />
-                  </View>
-                  <View style={styles.formContents}>
-                    <Text style={styles.label}>Phone Number</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={phoneNumber}
-                      onChangeText={(text) => setPhoneNumber(text)}
-                    />
-                  </View>
-                  <View style={styles.formContents}>
-                    <Text style={styles.label}>Password</Text>
-                    <View style={styles.passwordContainer}>
-                      <TextInput
-                        style={styles.input}
-                        secureTextEntry={!showPassword}
-                        onChangeText={(text) => setPassword(text)}
-                      />
-                      <TouchableOpacity
-                        onPress={() => setShowPassword(!showPassword)}
-                        style={styles.eyeIconContainer}
-                      >
-                        <FontAwesome
-                          name={showPassword ? "eye-slash" : "eye"}
-                          size={18}
-                          color="#d1d5db"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.moreInfoContainer}>
-                  <View style={styles.borderTop}></View>
                   <TouchableOpacity
-                    style={styles.moreInfoContent}
-                    onPress={() => router.push("/account/PaymentDetails")}
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.eyeIconContainer}
                   >
-                    <Text style={styles.moreInfoText}>Payment Details</Text>
-                    <Icon name="arrow-right" size={16} color={"#6B7280"} />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.moreInfoContent}
-                    onPress={() => router.push("/account/OrderHistory")}
-                  >
-                    <Text style={styles.moreInfoText}>Order History</Text>
-                    <Icon name="arrow-right" size={16} color={"#6B7280"} />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.buttonContainer}>
-                  <TouchableOpacity
-                    style={[styles.editButton, isLoading && { opacity: 0.6 }]}
-                    onPress={() => updateUserDetails()}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <>
-                        <Text style={styles.editButtonText}>Edit Profile</Text>
-                        <Icon name="edit" size={18} color={"#fff"} />
-                      </>
-                    )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.logOutButton}
-                    onPress={handleSignOut}
-                  >
-                    <Text style={styles.logOutButtonText}>Log out</Text>
-                    <Icon name="log-out" size={18} color={"#EF2A39"} />
+                    <FontAwesome
+                      name={showPassword ? "eye-slash" : "eye"}
+                      size={18}
+                      color="#d1d5db"
+                    />
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
-          </ScrollView>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+            <View style={styles.moreInfoContainer}>
+              <View style={styles.borderTop}></View>
+              <TouchableOpacity
+                style={styles.moreInfoContent}
+                onPress={() => router.push("/account/PaymentDetails")}
+              >
+                <Text style={styles.moreInfoText}>Payment Details</Text>
+                <Icon name="arrow-right" size={16} color={"#6B7280"} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.moreInfoContent}
+                onPress={() => router.push("/account/OrderHistory")}
+              >
+                <Text style={styles.moreInfoText}>Order History</Text>
+                <Icon name="arrow-right" size={16} color={"#6B7280"} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.editButton, isLoading && { opacity: 0.6 }]}
+                onPress={() => updateUserDetails()}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <>
+                    <Text style={styles.editButtonText}>Edit Profile</Text>
+                    <Icon name="edit" size={18} color={"#fff"} />
+                  </>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.logOutButton}
+                onPress={handleSignOut}
+              >
+                <Text style={styles.logOutButtonText}>Log out</Text>
+                <Icon name="log-out" size={18} color={"#EF2A39"} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

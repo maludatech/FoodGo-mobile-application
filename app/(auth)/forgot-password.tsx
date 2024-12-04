@@ -7,12 +7,8 @@ import {
   TextInput,
   PixelRatio,
   StyleSheet,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router, Link } from "expo-router";
@@ -21,7 +17,14 @@ import { useAuthContext } from "@/context/AuthContext";
 import Spinner from "@/components/Spinner";
 
 const ForgotPassword = () => {
-  const { user, dispatch } = useAuthContext();
+  const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/(tabs)");
+    }
+  }, [user]);
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -68,7 +71,7 @@ const ForgotPassword = () => {
       } else {
         setSuccessMessage(result.message || "Password reset email sent!");
         setTimeout(() => setSuccessMessage(""), 3000);
-        router.replace("/restore-password");
+        router.replace("/(auth)/restore-password");
       }
     } catch (error: any) {
       setErrorMessage("An error occurred");
@@ -79,82 +82,71 @@ const ForgotPassword = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      enabled={true}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={styles.container}>
-          <StatusBar backgroundColor="#EF2A39" style="light" />
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.innerContainer}>
-              <View style={styles.firstContainer}>
-                {/* Left and Right background images */}
-                <ImageBackground
-                  source={require("../../assets/images/left-side.png")}
-                  style={[styles.backgroundImage, styles.leftImage]}
-                  resizeMode="contain"
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#EF2A39" style="light" />
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.innerContainer}>
+          <View style={styles.firstContainer}>
+            {/* Left and Right background images */}
+            <ImageBackground
+              source={require("../../assets/images/left-side.png")}
+              style={[styles.backgroundImage, styles.leftImage]}
+              resizeMode="contain"
+            />
+            <ImageBackground
+              source={require("../../assets/images/right-side.png")}
+              style={[styles.backgroundImage, styles.rightImage]}
+              resizeMode="contain"
+            />
+            <View style={styles.overlay}>
+              <View style={styles.header}>
+                <Icon
+                  name="arrow-left"
+                  color={"#fff"}
+                  size={24}
+                  onPress={() => router.back()}
                 />
-                <ImageBackground
-                  source={require("../../assets/images/right-side.png")}
-                  style={[styles.backgroundImage, styles.rightImage]}
-                  resizeMode="contain"
-                />
-                <View style={styles.overlay}>
-                  <View style={styles.header}>
-                    <Icon
-                      name="arrow-left"
-                      color={"#fff"}
-                      size={24}
-                      onPress={() => router.back()}
-                    />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.secondContainer}>
-                <Text style={styles.title}>Forgotten Password</Text>
-
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    keyboardType="email-address"
-                    value={email}
-                    onChangeText={(text) => setEmail(text)}
-                  />
-                </View>
-
-                <View style={styles.buttonContainer}>
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleSubmit}
-                  >
-                    {isLoading ? (
-                      <Spinner color={"#FFF"} />
-                    ) : (
-                      <Text style={styles.buttonText}>Submit</Text>
-                    )}
-                  </TouchableOpacity>
-                </View>
-
-                <View style={styles.messageContainer}>
-                  {errorMessage && (
-                    <Text style={styles.errorMessage}>{errorMessage}</Text>
-                  )}
-                  {successMessage && (
-                    <Text style={styles.successMessage}>{successMessage}</Text>
-                  )}
-                </View>
               </View>
             </View>
-          </ScrollView>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </View>
+          <View style={styles.secondContainer}>
+            <Text style={styles.title}>Forgotten Password</Text>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+              />
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                {isLoading ? (
+                  <Spinner color={"#FFF"} />
+                ) : (
+                  <Text style={styles.buttonText}>Submit</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.messageContainer}>
+              {errorMessage && (
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
+              )}
+              {successMessage && (
+                <Text style={styles.successMessage}>{successMessage}</Text>
+              )}
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 export default ForgotPassword;
@@ -282,22 +274,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 1,
     borderColor: "#1D4ED8",
-    fontFamily: "roboto",
-  },
-  linkContainer: {
-    flexDirection: "column",
-    gap: "6",
-    paddingLeft: 8,
-  },
-  link: {
-    color: "#3C2F2F",
-    textDecorationLine: "underline",
-    fontSize: PixelRatio.getFontScale() * 15,
-    fontFamily: "roboto",
-  },
-  createAccountText: {
-    color: "#3C2F2F",
-    fontSize: PixelRatio.getFontScale() * 15,
     fontFamily: "roboto",
   },
 });

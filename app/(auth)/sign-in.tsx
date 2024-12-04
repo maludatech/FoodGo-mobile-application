@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF2A39",
     position: "relative",
     overflow: "hidden",
-    height: "20%",
+    height: "40%",
   },
   header: {
     flexDirection: "row",
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   title: {
-    fontSize: PixelRatio.getFontScale() * 26,
+    fontSize: PixelRatio.getFontScale() * 22,
     fontWeight: "bold",
     marginBottom: 8,
     textAlign: "center",

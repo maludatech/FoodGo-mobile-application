@@ -20,7 +20,7 @@ import Icon from "react-native-vector-icons/Feather";
 import { useAuthContext } from "@/context/AuthContext";
 import Spinner from "@/components/Spinner";
 
-const SignIn = () => {
+const ForgotPassword = () => {
   const { user, dispatch } = useAuthContext();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -63,16 +63,16 @@ const SignIn = () => {
 
       const result = await response.json();
       if (!response.ok) {
-        setErrorMessage(result.message || "Failed to sign in");
-        setTimeout(() => setErrorMessage(""), 5000);
-        return;
+        setErrorMessage(result.message || "An error occurred");
+        setTimeout(() => setErrorMessage(""), 3000);
+      } else {
+        setSuccessMessage(result.message || "Password reset email sent!");
+        setTimeout(() => setSuccessMessage(""), 3000);
+        router.replace("/restore-password");
       }
-
-      router.push("/(tabs)");
     } catch (error: any) {
-      setErrorMessage("Something went wrong. Please try again.");
-      console.error("Error during sign-in:", error);
-      setTimeout(() => setErrorMessage(""), 5000);
+      setErrorMessage("An error occurred");
+      setTimeout(() => setErrorMessage(""), 3000);
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +157,7 @@ const SignIn = () => {
     </KeyboardAvoidingView>
   );
 };
-export default SignIn;
+export default ForgotPassword;
 
 const styles = StyleSheet.create({
   container: {
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF2A39",
     position: "relative",
     overflow: "hidden",
-    height: "20%",
+    height: "40%",
   },
   header: {
     flexDirection: "row",
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   title: {
-    fontSize: PixelRatio.getFontScale() * 26,
+    fontSize: PixelRatio.getFontScale() * 22,
     fontWeight: "bold",
     marginBottom: 8,
     textAlign: "center",

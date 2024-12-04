@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   title: {
-    fontSize: PixelRatio.getFontScale() * 26,
+    fontSize: PixelRatio.getFontScale() * 22,
     fontWeight: "bold",
     marginBottom: 8,
     textAlign: "center",

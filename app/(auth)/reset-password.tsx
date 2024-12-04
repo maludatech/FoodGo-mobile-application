@@ -11,13 +11,17 @@ import {
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useAuthContext } from "@/context/AuthContext";
 import Spinner from "@/components/Spinner";
 
 const ResetPassword = () => {
   const { user } = useAuthContext();
+
+  const params = useLocalSearchParams();
+  const userId = params?.userId;
 
   useEffect(() => {
     if (user) {
@@ -25,82 +29,44 @@ const ResetPassword = () => {
     }
   }, [user]);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [code, setCode] = useState(Array(6).fill(""));
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [newPassword, setNewPassword] = useState<string>();
+  const [confirmNewPassword, setConfirmNewPassword] = useState<string>();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [successMessage, setSuccessMessage] = useState<string>();
 
-  // Enable button only if all input fields are filled
-  useEffect(() => {
-    setIsButtonEnabled(code.every((digit) => digit !== ""));
-  }, [code]);
-
-  // Handle input changes, including backspace navigation
-  const handleInputChange = (e: any, index: any) => {
-    const value = e.target.value;
-    if (value.length > 1) return;
-
-    const newCode = [...code];
-    newCode[index] = value;
-    setCode(newCode);
-
-    if (value && index < 5) {
-      // Move focus to the next input
-      const nextInput = document.getElementById(`code-input-${index + 1}`);
-      if (nextInput) {
-        nextInput.focus();
-      }
-    } else if (!value && index > 0) {
-      // Move focus to the previous input on backspace
-      const prevInput = document.getElementById(`code-input-${index - 1}`);
-      if (prevInput) {
-        prevInput.focus();
-      }
+  const handleSubmit = async (data: any) => {
+    if (newPassword !== confirmNewPassword) {
+      setErrorMessage("Passwords do not match");
+      return;
     }
-  };
 
-  // Handle pasting a 6-digit code
-  const handlePaste = (e: any) => {
-    const paste = e.clipboardData.getData("text").slice(0, 6).split("");
-    setCode(paste);
-
-    // Set focus to the first empty input or the last one
-    const firstEmptyIndex = paste.findIndex((char: any) => char === "");
-    const nextInput = document.getElementById(
-      `code-input-${firstEmptyIndex >= 0 ? firstEmptyIndex : 5}`
-    );
-    if (nextInput) {
-      nextInput.focus();
-    }
-  };
-
-  // Handle submission of the 6-digit code
-  const handleContinue = async () => {
-    setIsLoading(true);
-    if (!isButtonEnabled) return;
-
-    const restoreCode = code.join("");
     try {
+      setIsLoading(true);
       const response = await fetch(
-        "https://food-go-backend.vercel.app/api/auth/restore-password",
+        "https://food-go-backend.vercel.app/api/auth/reset-password",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code: restoreCode }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...data, userId }),
         }
       );
 
       if (response.ok) {
-        const { userId } = await response.json();
-        router.replace(`/(auth)/reset-password?userId=${userId}`);
+        setSuccessMessage("Password reset successfully");
+        setTimeout(() => setSuccessMessage(""), 3000);
+        router.replace("/(auth)/sign-in");
       } else {
-        const data = await response.json();
-        setErrorMessage(data.message);
+        const result = await response.json();
+        setErrorMessage(result.message);
         setTimeout(() => setErrorMessage(""), 3000);
       }
     } catch (error) {
-      console.error("Error during fetch:", error);
-      setErrorMessage("Internal server error");
+      setErrorMessage("Internal Server Error");
       setTimeout(() => setErrorMessage(""), 3000);
     } finally {
       setIsLoading(false);
@@ -141,18 +107,62 @@ const ResetPassword = () => {
           <View style={styles.secondContainer}>
             <Text style={styles.title}>Reset Password</Text>
 
-            <Text style={styles.subTitle}>
-              Enter the six-digit code sent to your email
-            </Text>
+            <View style={styles.inputContainer}>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  secureTextEntry={!showPassword}
+                  value={newPassword}
+                  onChangeText={(text) => setNewPassword(text)}
+                  accessibilityLabel="New Password"
+                  autoComplete="password-new"
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIconContainer}
+                >
+                  <FontAwesome
+                    name={showPassword ? "eye-slash" : "eye"}
+                    size={18}
+                    color="#d1d5db"
+                  />
+                </TouchableOpacity>
+              </View>
 
-            <View style={styles.inputContainer}></View>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Confirm Password"
+                  secureTextEntry={!showConfirmPassword}
+                  value={confirmNewPassword}
+                  onChangeText={(text) => setConfirmNewPassword(text)}
+                  accessibilityLabel="Confirm Password"
+                  autoComplete="password-new"
+                />
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={styles.eyeIconContainer}
+                >
+                  <FontAwesome
+                    name={showConfirmPassword ? "eye-slash" : "eye"}
+                    size={18}
+                    color="#d1d5db"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={handleContinue}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleSubmit}
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <Spinner color={"#FFF"} />
                 ) : (
-                  <Text style={styles.buttonText}>Continue</Text>
+                  <Text style={styles.buttonText}>Reset Password</Text>
                 )}
               </TouchableOpacity>
             </View>

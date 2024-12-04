@@ -126,13 +126,18 @@ const ForgotPassword = () => {
             </View>
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleSubmit}
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <Spinner color={"#FFF"} />
                 ) : (
                   <Text style={styles.buttonText}>Submit</Text>
                 )}
               </TouchableOpacity>
+              <Link href={"/(auth)/restore-password"}>Restore Password</Link>
             </View>
 
             <View style={styles.messageContainer}>
@@ -221,15 +226,6 @@ const styles = StyleSheet.create({
     borderColor: "#d1d5db",
     borderRadius: 16,
     fontFamily: "roboto",
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    position: "relative",
-  },
-  eyeIconContainer: {
-    position: "absolute",
-    right: 16,
   },
   buttonContainer: {
     flexDirection: "row",

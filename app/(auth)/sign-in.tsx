@@ -207,6 +207,7 @@ const SignIn = () => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={handleSignIn}
+                    disabled={isLoading}
                   >
                     {isLoading ? (
                       <Spinner color={"#FFF"} />

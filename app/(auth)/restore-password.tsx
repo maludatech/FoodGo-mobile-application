@@ -60,7 +60,7 @@ const RestorePassword = () => {
     setIsLoading(true);
     if (!isButtonEnabled) return;
 
-    const restoreCode = code.join("");
+    const restoreCode = code.join("").toLowerCase();
     try {
       const response = await fetch(
         "https://food-go-backend.vercel.app/api/auth/restore-password",
@@ -120,7 +120,7 @@ const RestorePassword = () => {
           </View>
 
           <View style={styles.secondContainer}>
-            <Text style={styles.title}>Reset Password</Text>
+            <Text style={styles.title}>Restore Password</Text>
             <Text style={styles.subTitle}>
               Enter the six-digit code sent to your email
             </Text>
@@ -133,14 +133,18 @@ const RestorePassword = () => {
                   value={digit}
                   onChangeText={(value) => handleInputChange(value, index)}
                   maxLength={1}
-                  keyboardType="numeric"
+                  keyboardType="default"
                   style={styles.input}
                 />
               ))}
             </View>
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={handleContinue}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleContinue}
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <Spinner color="#FFF" />
                 ) : (
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: PixelRatio.getFontScale() * 26,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 4,
     textAlign: "center",
     color: "#3C2F2F",
     fontFamily: "roboto",
@@ -225,27 +229,21 @@ const styles = StyleSheet.create({
     fontFamily: "roboto",
     fontWeight: "semibold",
     fontSize: PixelRatio.getFontScale() * 14,
+    marginBottom: 4,
   },
   inputContainer: {
-    flexDirection: "column",
+    flexDirection: "row",
     gap: 16,
+    justifyContent: "center",
+    alignItems: "center",
   },
   input: {
-    width: "100%",
+    // width: "100%",
     padding: 12,
     borderWidth: 1,
     borderColor: "#d1d5db",
-    borderRadius: 16,
+    borderRadius: 10,
     fontFamily: "roboto",
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    position: "relative",
-  },
-  eyeIconContainer: {
-    position: "absolute",
-    right: 16,
   },
   buttonContainer: {
     flexDirection: "row",

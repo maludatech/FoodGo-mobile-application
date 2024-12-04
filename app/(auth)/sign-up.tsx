@@ -223,7 +223,11 @@ const SignUp = () => {
             </View>
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleSignUp}
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <Spinner color={"#FFE5CF"} />
                 ) : (

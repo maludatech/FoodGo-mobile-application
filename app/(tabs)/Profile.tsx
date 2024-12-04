@@ -276,6 +276,7 @@ const Profile = () => {
               <TouchableOpacity
                 style={styles.logOutButton}
                 onPress={handleSignOut}
+                disabled={isLoading}
               >
                 <Text style={styles.logOutButtonText}>Log out</Text>
                 <Icon name="log-out" size={18} color={"#EF2A39"} />

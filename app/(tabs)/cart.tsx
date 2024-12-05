@@ -21,8 +21,15 @@ const Cart = () => {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
-  const deliveryFee = 1.5;
-  const tax = 0.3;
+
+  const [deliveryFee, handleDeliveryFee] = useState<number>(
+    cart.length > 0 ? 1.5 : 0
+  );
+  const [tax, setTax] = useState<number>(cart.length > 0 ? 0.3 : 0);
+  const [deliveryTime, setDeliveryTime] = useState<number>(
+    cart.length > 0 ? 15 : 0
+  );
+
   const total = totalPrice + deliveryFee + tax;
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -75,7 +82,7 @@ const Cart = () => {
                   <Text style={styles.deliveryTime}>
                     Estimated delivery time
                   </Text>
-                  <Text style={styles.deliveryTime}>15 - 30 mins</Text>
+                  <Text style={styles.deliveryTime}>{deliveryTime} mins</Text>
                 </View>
               </View>
             </View>

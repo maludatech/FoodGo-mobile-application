@@ -37,9 +37,15 @@ const ResetPassword = () => {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [successMessage, setSuccessMessage] = useState<string>();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async () => {
+    if (!newPassword || !confirmNewPassword) {
+      setErrorMessage("Please fill all the required fields");
+      setTimeout(() => setErrorMessage(""), 3000);
+      return;
+    }
     if (newPassword !== confirmNewPassword) {
       setErrorMessage("Passwords do not match");
+      setTimeout(() => setErrorMessage(""), 3000);
       return;
     }
 
@@ -52,7 +58,7 @@ const ResetPassword = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ ...data, userId }),
+          body: JSON.stringify({ newPassword, userId }),
         }
       );
 

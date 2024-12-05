@@ -137,7 +137,7 @@ const ForgotPassword = () => {
                   <Text style={styles.buttonText}>Submit</Text>
                 )}
               </TouchableOpacity>
-              <Link href={"/(auth)/restore-password"}>Restore Password</Link>
+              {/* <Link href={"/(auth)/restore-password"}>Restore Password</Link> */}
             </View>
 
             <View style={styles.messageContainer}>

@@ -5,8 +5,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Icon from "react-native-vector-icons/Feather";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -22,19 +23,48 @@ const Cart = () => {
     0
   );
 
-  const [deliveryFee, handleDeliveryFee] = useState<number>(
-    cart.length > 0 ? 1.5 : 0
-  );
-  const [tax, setTax] = useState<number>(cart.length > 0 ? 0.3 : 0);
-  const [deliveryTime, setDeliveryTime] = useState<number>(
-    cart.length > 0 ? 15 : 0
-  );
+  const [deliveryFee, handleDeliveryFee] = useState<number>(0);
+  const [tax, setTax] = useState<number>(0);
+  const [deliveryTime, setDeliveryTime] = useState<number>(0);
 
-  const total = totalPrice + deliveryFee + tax;
+  const total = useMemo(
+    () => totalPrice + deliveryFee + tax,
+    [totalPrice, deliveryFee, tax]
+  );
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
   const [isChecked, setIsChecked] = useState<boolean>(false);
+
+  useEffect(() => {
+    const hasItems = cart.length > 0;
+    setDeliveryFee(hasItems ? 1.5 : 0);
+    handleDeliveryFee(hasItems ? 1.5 : 0);
+    setTax(hasItems ? 0.3 : 0);
+    setDeliveryTime(hasItems ? 15 : 0);
+  }, [cart]);
+
+  const handleRemoval = () => {
+    try {
+      clearCart();
+      setDeliveryFee(0);
+      setTax(0);
+      setDeliveryTime(0);
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      Alert.alert("Error", "Failed to clear the cart.");
+    }
+  };
+
+  const handlePayment = () => {
+    try {
+      if (total > 0) {
+        router.push("/checkout/PaymentSuccess");
+      }
+    } catch (error) {
+      console.error("Error making payment: ", error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -52,7 +82,7 @@ const Cart = () => {
               name="trash-2"
               size={24}
               color={"#3C2F2F"}
-              onPress={clearCart}
+              onPress={handleRemoval}
             />
           </View>
           <View style={styles.summaryContainer}>
@@ -158,7 +188,7 @@ const Cart = () => {
             <View style={styles.orderButtonContainer}>
               <TouchableOpacity
                 style={styles.orderButton}
-                onPress={() => router.push("/checkout/PaymentSuccess")}
+                onPress={handlePayment}
               >
                 <Text style={styles.orderButtonText}>Pay Now</Text>
               </TouchableOpacity>

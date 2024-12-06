@@ -173,8 +173,8 @@ const Profile = () => {
                     : require("../../assets/images/userImage.jpg")
                 }
                 style={{
-                  width: 100,
-                  height: 100,
+                  width: 80,
+                  height: 80,
                   borderRadius: 16,
                   borderWidth: 2,
                   borderColor: "#EF2A39",

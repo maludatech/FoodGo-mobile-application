@@ -1,25 +1,24 @@
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  ImageBackground,
   TextInput,
   TouchableOpacity,
   Alert,
-  FlatList,
   ActivityIndicator,
+  PixelRatio,
+  ImageBackground,
 } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
+import Icon from "react-native-vector-icons/Feather";
 import { useAuthContext } from "@/context/AuthContext";
 import { useCartContext } from "@/context/CartContext";
 
 const PaymentDetails = () => {
-  const { user, dispatch } = useAuthContext();
+  const { user } = useAuthContext();
   const { clearCart } = useCartContext();
 
   const userId = user?.userId;
@@ -27,39 +26,73 @@ const PaymentDetails = () => {
   const [cards, setCards] = useState([]);
   const [cardNumber, setCardNumber] = useState("");
   const [cardType, setCardType] = useState("Visa");
+  const [cardDate, setCardDate] = useState("");
+  const [cvv, setCvv] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    fetchCards();
-  }, []);
-
-  const fetchCards = async () => {
+  // Fetch Cards with useCallback
+  const fetchCards = useCallback(async () => {
     try {
       const response = await fetch(
-        `https://your-api.com/api/user/cards/${userId}`
+        `https://food-go-backend.vercel.app/api/user/payment-card/${userId}`
       );
       if (response.ok) {
         const result = await response.json();
-        setCards(result.cards);
+        if (result && Array.isArray(result)) {
+          setCards(result);
+        } else {
+          Alert.alert("Unexpected Response", "Failed to fetch cards.");
+        }
+      } else {
+        Alert.alert("Fetch Error", "Unable to fetch payment cards.");
       }
     } catch (error) {
-      console.error("Fetch cards error: ", error);
+      console.error("Error fetching cards: ", error);
+      Alert.alert("Network Error", "Please try again later.");
     }
+  }, [userId]);
+
+  // Validate Card Details
+  const validateCardDetails = () => {
+    const cardNumberRegex = /^[0-9]{16}$/; // 16-digit card number
+    const cardDateRegex = /^(0[1-9]|1[0-2])\/[0-9]{2}$/; // MM/YY format
+    const cvvRegex = /^[0-9]{3}$/; // 3-digit CVV
+
+    if (!cardNumberRegex.test(cardNumber)) {
+      Alert.alert(
+        "Validation Error",
+        "Invalid card number. Must be 16 digits."
+      );
+      return false;
+    }
+
+    if (!cardDateRegex.test(cardDate)) {
+      Alert.alert(
+        "Validation Error",
+        "Invalid card date. Use MM/YY format (e.g., 12/25)."
+      );
+      return false;
+    }
+
+    if (!cvvRegex.test(cvv)) {
+      Alert.alert("Validation Error", "Invalid CVV. Must be 3 digits.");
+      return false;
+    }
+
+    return true;
   };
 
-  const addCard = async () => {
-    if (!cardNumber.trim()) {
-      Alert.alert("Validation Error", "Card number cannot be empty.");
-      return;
-    }
+  // Add Card with useCallback
+  const addCard = useCallback(async () => {
+    if (!validateCardDetails()) return;
 
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://your-api.com/api/user/cards/${userId}`,
+        `https://your-api.com/api/user/payment-card/${userId}`,
         {
           method: "POST",
-          body: JSON.stringify({ cardNumber, cardType }),
+          body: JSON.stringify({ cardNumber, cardType, cardDate, cvv }),
           headers: { "Content-Type": "application/json" },
         }
       );
@@ -67,6 +100,8 @@ const PaymentDetails = () => {
         Alert.alert("Card added successfully!");
         fetchCards();
         setCardNumber("");
+        setCardDate("");
+        setCvv("");
       } else {
         Alert.alert("Error adding card", "Please try again later.");
       }
@@ -76,45 +111,14 @@ const PaymentDetails = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [cardNumber, cardType, cardDate, cvv, fetchCards, userId]);
 
-  const deleteCard = async (cardId: any) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(
-        `https://food-go-backend.vercel.app/api/user/payment-card/${userId}`,
-        { method: "DELETE" }
-      );
-      if (response.ok) {
-        Alert.alert("Card deleted successfully!");
-        fetchCards();
-      } else {
-        Alert.alert("Error deleting card", "Please try again later.");
-      }
-    } catch (error) {
-      console.error("Delete card error: ", error);
-      Alert.alert("Network Error", "Please check your internet connection.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      dispatch({ type: "LOGOUT" });
-      clearCart();
-    } catch (error) {
-      Alert.alert(
-        "Sign Out Error",
-        "There was an error signing out. Please try again."
-      );
-      console.error("Sign Out Error:", error);
-    }
-  };
+  useEffect(() => {
+    fetchCards();
+  }, [fetchCards]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#EF2A39" style="light" />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.innerContainer}>
           <View style={styles.firstContainer}>
@@ -137,38 +141,13 @@ const PaymentDetails = () => {
                   size={20}
                   onPress={() => router.back()}
                 />
-                <Icon
-                  name="log-out"
-                  color={"#fff"}
-                  size={20}
-                  onPress={handleSignOut}
-                />
               </View>
             </View>
           </View>
           <View style={styles.secondContainer}>
             <Text style={styles.title}>Payment Methods</Text>
-            <FlatList
-              data={cards}
-              keyExtractor={(item: any) => item.id.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.cardItem}>
-                  <Text style={styles.cardText}>
-                    {item.cardType} - {item.cardNumber.slice(-4)}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => deleteCard(item.id)}
-                    style={styles.deleteButton}
-                  >
-                    <Icon name="trash" size={20} color="#fff" />
-                  </TouchableOpacity>
-                </View>
-              )}
-              ListEmptyComponent={
-                <Text style={styles.emptyText}>No cards added yet.</Text>
-              }
-            />
 
+            {/* Input Fields */}
             <Text style={styles.inputLabel}>Card Number</Text>
             <TextInput
               style={styles.input}
@@ -176,29 +155,42 @@ const PaymentDetails = () => {
               keyboardType="numeric"
               value={cardNumber}
               onChangeText={setCardNumber}
+              maxLength={16}
+              accessible
+              accessibilityLabel="Enter card number"
             />
-            <View style={styles.cardTypeContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.cardTypeButton,
-                  cardType === "Visa" && styles.selectedCardType,
-                ]}
-                onPress={() => setCardType("Visa")}
-              >
-                <Text style={styles.cardTypeText}>Visa</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.cardTypeButton,
-                  cardType === "MasterCard" && styles.selectedCardType,
-                ]}
-                onPress={() => setCardType("MasterCard")}
-              >
-                <Text style={styles.cardTypeText}>MasterCard</Text>
-              </TouchableOpacity>
-            </View>
 
-            <TouchableOpacity style={styles.addButton} onPress={addCard}>
+            <Text style={styles.inputLabel}>Card Date (MM/YY)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter card date"
+              keyboardType="numeric"
+              value={cardDate}
+              onChangeText={setCardDate}
+              maxLength={5}
+              accessible
+              accessibilityLabel="Enter card date in MM/YY format"
+            />
+
+            <Text style={styles.inputLabel}>CVV</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter CVV"
+              keyboardType="numeric"
+              value={cvv}
+              onChangeText={setCvv}
+              maxLength={3}
+              secureTextEntry
+              accessible
+              accessibilityLabel="Enter 3-digit CVV"
+            />
+
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={addCard}
+              accessible
+              accessibilityLabel="Add payment card"
+            >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
@@ -279,11 +271,6 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 16,
   },
-  deleteButton: {
-    backgroundColor: "#EF2A39",
-    padding: 8,
-    borderRadius: 5,
-  },
   inputLabel: {
     fontSize: 16,
     marginTop: 20,
@@ -302,19 +289,19 @@ const styles = StyleSheet.create({
   cardTypeButton: {
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "#ddd",
+    backgroundColor: " #E2E8F0",
     flex: 1,
     alignItems: "center",
     marginHorizontal: 5,
   },
   selectedCardType: {
-    backgroundColor: "#EF2A39",
+    backgroundColor: "#3C2F2F",
   },
   cardTypeText: {
     color: "#fff",
   },
   addButton: {
-    backgroundColor: "#EF2A39",
+    backgroundColor: "#3C2F2F",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
@@ -326,6 +313,7 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: "center",
     color: "#888",
+    fontSize: PixelRatio.getFontScale() * 14,
     marginVertical: 20,
   },
 });

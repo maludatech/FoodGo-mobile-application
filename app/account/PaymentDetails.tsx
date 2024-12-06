@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,48 +15,39 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
 import { useAuthContext } from "@/context/AuthContext";
-import { useCartContext } from "@/context/CartContext";
+import PaymentCards from "@/components/PaymentCards";
 
 const PaymentDetails = () => {
   const { user } = useAuthContext();
-  const { clearCart } = useCartContext();
 
   const userId = user?.userId;
 
-  const [cards, setCards] = useState([]);
   const [cardNumber, setCardNumber] = useState("");
   const [cardType, setCardType] = useState("Visa");
   const [cardDate, setCardDate] = useState("");
   const [cvv, setCvv] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch Cards with useCallback
-  const fetchCards = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `https://food-go-backend.vercel.app/api/user/payment-card/${userId}`
-      );
-      if (response.ok) {
-        const result = await response.json();
-        if (result && Array.isArray(result)) {
-          setCards(result);
-        } else {
-          Alert.alert("Unexpected Response", "Failed to fetch cards.");
-        }
-      } else {
-        Alert.alert("Fetch Error", "Unable to fetch payment cards.");
-      }
-    } catch (error) {
-      console.error("Error fetching cards: ", error);
-      Alert.alert("Network Error", "Please try again later.");
-    }
-  }, [userId]);
+  // Detect Card Type
+  const detectCardType = (number: any) => {
+    const visaRegex = /^4/;
+    const masterCardRegex = /^5[1-5]/;
+    if (visaRegex.test(number)) return "Visa";
+    if (masterCardRegex.test(number)) return "MasterCard";
+    return "Unknown";
+  };
 
   // Validate Card Details
   const validateCardDetails = () => {
     const cardNumberRegex = /^[0-9]{16}$/; // 16-digit card number
     const cardDateRegex = /^(0[1-9]|1[0-2])\/[0-9]{2}$/; // MM/YY format
     const cvvRegex = /^[0-9]{3}$/; // 3-digit CVV
+
+    const detectedType = detectCardType(cardNumber);
+    if (detectedType === "Unknown") {
+      Alert.alert("Validation Error", "We only accept Visa or MasterCard.");
+      return false;
+    }
 
     if (!cardNumberRegex.test(cardNumber)) {
       Alert.alert(
@@ -79,26 +70,32 @@ const PaymentDetails = () => {
       return false;
     }
 
+    setCardType(detectedType);
     return true;
   };
 
-  // Add Card with useCallback
+  // Add Card
   const addCard = useCallback(async () => {
     if (!validateCardDetails()) return;
 
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://your-api.com/api/user/payment-card/${userId}`,
+        `https://food-go-backend.vercel.app/api/user/payment-card/${userId}`,
         {
           method: "POST",
-          body: JSON.stringify({ cardNumber, cardType, cardDate, cvv }),
+          body: JSON.stringify({
+            cardNumber,
+            cardExpiryDate: cardDate,
+            cardCVV: cvv,
+            cardType,
+            cardDate,
+          }),
           headers: { "Content-Type": "application/json" },
         }
       );
       if (response.ok) {
         Alert.alert("Card added successfully!");
-        fetchCards();
         setCardNumber("");
         setCardDate("");
         setCvv("");
@@ -111,18 +108,14 @@ const PaymentDetails = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [cardNumber, cardType, cardDate, cvv, fetchCards, userId]);
-
-  useEffect(() => {
-    fetchCards();
-  }, [fetchCards]);
+  }, [cardNumber, cardType, cardDate, cvv, userId]);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.innerContainer}>
           <View style={styles.firstContainer}>
-            {/* Left and Right background images */}
+            {/* Background images */}
             <ImageBackground
               source={require("../../assets/images/left-side.png")}
               style={[styles.backgroundImage, styles.leftImage]}
@@ -144,9 +137,10 @@ const PaymentDetails = () => {
               </View>
             </View>
           </View>
+
           <View style={styles.secondContainer}>
             <Text style={styles.title}>Payment Methods</Text>
-
+            <PaymentCards />
             {/* Input Fields */}
             <Text style={styles.inputLabel}>Card Number</Text>
             <TextInput
@@ -154,22 +148,21 @@ const PaymentDetails = () => {
               placeholder="Enter card number"
               keyboardType="numeric"
               value={cardNumber}
-              onChangeText={setCardNumber}
+              onChangeText={(value) => {
+                setCardNumber(value);
+                setCardType(detectCardType(value));
+              }}
               maxLength={16}
-              accessible
-              accessibilityLabel="Enter card number"
             />
 
             <Text style={styles.inputLabel}>Card Date (MM/YY)</Text>
             <TextInput
               style={styles.input}
               placeholder="Enter card date"
-              keyboardType="numeric"
+              keyboardType="default"
               value={cardDate}
               onChangeText={setCardDate}
               maxLength={5}
-              accessible
-              accessibilityLabel="Enter card date in MM/YY format"
             />
 
             <Text style={styles.inputLabel}>CVV</Text>
@@ -181,16 +174,9 @@ const PaymentDetails = () => {
               onChangeText={setCvv}
               maxLength={3}
               secureTextEntry
-              accessible
-              accessibilityLabel="Enter 3-digit CVV"
             />
 
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={addCard}
-              accessible
-              accessibilityLabel="Add payment card"
-            >
+            <TouchableOpacity style={styles.addButton} onPress={addCard}>
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
@@ -205,6 +191,8 @@ const PaymentDetails = () => {
 };
 
 export default PaymentDetails;
+
+// Updated styles remain the same
 
 const styles = StyleSheet.create({
   container: {
@@ -313,7 +301,8 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: "center",
     color: "#888",
-    fontSize: PixelRatio.getFontScale() * 14,
-    marginVertical: 20,
+    fontSize: PixelRatio.getFontScale() * 16,
+    marginVertical: 24,
+    fontWeight: "semibold",
   },
 });

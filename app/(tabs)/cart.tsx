@@ -14,6 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCartContext } from "@/context/CartContext";
 import { PixelRatio } from "react-native";
+import PaymentCards from "@/components/PaymentCards";
 
 const Cart = () => {
   const { cart, setDeliveryFee, clearCart } = useCartContext();
@@ -31,10 +32,6 @@ const Cart = () => {
     () => totalPrice + deliveryFee + tax,
     [totalPrice, deliveryFee, tax]
   );
-
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>("");
-  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   useEffect(() => {
     const hasItems = cart.length > 0;
@@ -117,65 +114,9 @@ const Cart = () => {
               </View>
             </View>
           </View>
-          <View style={styles.paymentContainer}>
+          <View style={styles.paymentCardContainer}>
             <Text style={styles.paymentHeading}>Payment methods</Text>
-            <View style={styles.paymentCards}>
-              <TouchableOpacity
-                style={styles.masterCardButtonContainer}
-                onPress={() => setSelectedPaymentMethod("masterCard")}
-              >
-                <Image
-                  source={require("../../assets/images/paymentCards/mastercardLogo.png")}
-                  width={50}
-                  height={50}
-                  alt="master card logo"
-                />
-                <View style={styles.PaymentCardDetails}>
-                  <Text style={styles.cardType}>Credit card</Text>
-                  <Text style={styles.cardNumber}>5105 **** **** 0505</Text>
-                </View>
-                <View
-                  style={[
-                    styles.radioButton,
-                    selectedPaymentMethod === "masterCard" &&
-                      styles.radioButtonSelected,
-                  ]}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.visaCardButtonContainer}
-                onPress={() => setSelectedPaymentMethod("visaCard")}
-              >
-                <Image
-                  source={require("../../assets/images/paymentCards/visaLogo.png")}
-                  width={50}
-                  height={50}
-                  alt="visa card logo"
-                />
-                <View style={styles.PaymentCardDetails}>
-                  <Text style={styles.VisaCardType}>Debit card</Text>
-                  <Text style={styles.VisaCardNumber}>5105 **** **** 0505</Text>
-                </View>
-                <View
-                  style={[
-                    styles.radioButton,
-                    selectedPaymentMethod === "visaCard" &&
-                      styles.radioButtonSelected,
-                  ]}
-                />
-              </TouchableOpacity>
-              <View style={styles.checkedSection}>
-                <TouchableOpacity
-                  style={[styles.checkbox, isChecked && styles.checkboxChecked]}
-                  onPress={() => setIsChecked(!isChecked)}
-                >
-                  {isChecked && <Icon name="check" size={16} color="#FFF" />}
-                </TouchableOpacity>
-                <Text style={styles.checkedText}>
-                  Save card details for future payments
-                </Text>
-              </View>
-            </View>
+            <PaymentCards />
           </View>
           <View style={styles.orderContainer}>
             <View style={styles.totalContainer}>
@@ -229,6 +170,15 @@ const styles = StyleSheet.create({
     fontWeight: "semibold",
     color: "#3C2F2F",
   },
+  paymentCardContainer: {
+    paddingHorizontal: "4%",
+  },
+  paymentHeading: {
+    fontSize: PixelRatio.getFontScale() * 20,
+    fontFamily: "poppins",
+    fontWeight: "semibold",
+    color: "#3C2F2F",
+  },
   orderDetailsContainer: {
     flexDirection: "column",
     gap: "6%",
@@ -266,102 +216,6 @@ const styles = StyleSheet.create({
     fontWeight: "semibold",
     fontFamily: "roboto",
     fontSize: PixelRatio.getFontScale() * 14,
-  },
-  paymentContainer: {
-    flexDirection: "column",
-    gap: "6%",
-    paddingHorizontal: "4%",
-  },
-  paymentHeading: {
-    fontSize: PixelRatio.getFontScale() * 20,
-    fontFamily: "poppins",
-    fontWeight: "semibold",
-    color: "#3C2F2F",
-  },
-  paymentCards: {
-    flexDirection: "column",
-    gap: "6%",
-  },
-  masterCardButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#3C2F2F",
-    borderRadius: 16,
-    padding: "4%",
-  },
-  visaCardButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#E2E8F0",
-    borderRadius: 16,
-    padding: "4%",
-  },
-  PaymentCardDetails: {
-    flexDirection: "column",
-    gap: "2%",
-  },
-  cardType: {
-    fontFamily: "roboto",
-    fontWeight: "medium",
-    fontSize: PixelRatio.getFontScale() * 14,
-    color: "#FFFF",
-  },
-  cardNumber: {
-    fontFamily: "roboto",
-    fontWeight: "medium",
-    fontSize: PixelRatio.getFontScale() * 12,
-    color: "#FFFFFF",
-  },
-  VisaCardType: {
-    fontFamily: "roboto",
-    fontWeight: "medium",
-    fontSize: PixelRatio.getFontScale() * 14,
-    color: "#000",
-  },
-  VisaCardNumber: {
-    fontFamily: "roboto",
-    fontWeight: "medium",
-    fontSize: PixelRatio.getFontScale() * 12,
-    color: "#000",
-  },
-  radioButton: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-    marginRight: 10,
-  },
-  radioButtonSelected: {
-    backgroundColor: "#FF7F50",
-  },
-  checkedSection: {
-    flexDirection: "row",
-    gap: 2,
-    alignItems: "center",
-    paddingLeft: "3%",
-    paddingTop: "4%",
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: "#808080",
-    borderRadius: 4,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 8,
-  },
-  checkboxChecked: {
-    backgroundColor: "#FF7F50",
-    borderColor: "#FFF",
-  },
-  checkedText: {
-    color: "#808080",
-    fontSize: PixelRatio.getFontScale() * 14,
-    fontFamily: "roboto",
   },
   orderContainer: {
     paddingHorizontal: "4%",

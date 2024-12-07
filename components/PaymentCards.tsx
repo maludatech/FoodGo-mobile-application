@@ -1,14 +1,12 @@
 import {
   Alert,
   Image,
-  PixelRatio,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import Icon from "react-native-vector-icons/Feather";
 import { useAuthContext } from "@/context/AuthContext";
 
 interface Card {
@@ -16,61 +14,55 @@ interface Card {
   cardType: string;
 }
 
-const PaymentCards = ({ updateTrigger }: { updateTrigger: boolean }) => {
+const PaymentCards = () => {
   const { user } = useAuthContext();
-
   const userId = user?.userId;
-
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
 
-  // Fetch Cards
   const fetchCards = useCallback(async () => {
+    if (!userId) return;
+
     try {
       const response = await fetch(
         `https://food-go-backend.vercel.app/api/user/payment-card/${userId}`
       );
+
       if (response.ok) {
         const result = await response.json();
-        if (result && Array.isArray(result)) {
+        if (Array.isArray(result)) {
           setCards(result);
         } else {
-          Alert.alert("Unexpected Response", "Failed to fetch cards.");
+          Alert.alert("Error", "Unexpected response format.");
         }
       } else {
-        Alert.alert("Fetch Error", "Unable to fetch payment cards.");
+        console.error("Failed response:", await response.text());
+        Alert.alert("Error", "Failed to fetch cards.");
       }
     } catch (error) {
-      console.error("Error fetching cards: ", error);
-      Alert.alert("Network Error", "Please try again later.");
+      console.error("Fetch error:", error);
+      Alert.alert("Error", "Network error occurred.");
     }
   }, [userId]);
 
   useEffect(() => {
     fetchCards();
-  }, [fetchCards, updateTrigger]);
+  }, [fetchCards]);
 
   return (
     <View style={styles.paymentContainer}>
-      {/* Display Cards */}
       {cards.length > 0 ? (
         cards.map((card, index) => {
           const isMasterCard = card.cardType.toLowerCase() === "mastercard";
-          const containerStyle = isMasterCard
-            ? styles.masterCardButtonContainer
-            : styles.visaCardButtonContainer;
-          const cardTypeStyle = isMasterCard
-            ? styles.cardType
-            : styles.VisaCardType;
-          const cardNumberStyle = isMasterCard
-            ? styles.cardNumber
-            : styles.VisaCardNumber;
-
           return (
             <TouchableOpacity
               key={index}
-              style={containerStyle}
+              style={
+                isMasterCard
+                  ? styles.masterCardButtonContainer
+                  : styles.visaCardButtonContainer
+              }
               onPress={() => setSelectedPaymentMethod(card.cardType)}
             >
               <Image
@@ -84,8 +76,16 @@ const PaymentCards = ({ updateTrigger }: { updateTrigger: boolean }) => {
                 alt={`${card.cardType} logo`}
               />
               <View style={styles.PaymentCardDetails}>
-                <Text style={cardTypeStyle}>{card.cardType}</Text>
-                <Text style={cardNumberStyle}>
+                <Text
+                  style={isMasterCard ? styles.cardType : styles.VisaCardType}
+                >
+                  {card.cardType}
+                </Text>
+                <Text
+                  style={
+                    isMasterCard ? styles.cardNumber : styles.VisaCardNumber
+                  }
+                >
                   •••• {card.cardNumber.slice(-4)}
                 </Text>
               </View>
@@ -106,55 +106,45 @@ const PaymentCards = ({ updateTrigger }: { updateTrigger: boolean }) => {
   );
 };
 
-export default PaymentCards;
-
 const styles = StyleSheet.create({
   paymentContainer: {
     flexDirection: "column",
-    gap: "6%",
+    paddingVertical: 16,
   },
   masterCardButtonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#3C2F2F",
     borderRadius: 16,
-    padding: "4%",
+    padding: 16,
+    marginBottom: 12,
   },
   visaCardButtonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#E2E8F0",
     borderRadius: 16,
-    padding: "4%",
+    padding: 16,
+    marginBottom: 12,
   },
   PaymentCardDetails: {
-    flexDirection: "column",
-    gap: "2%",
+    marginLeft: 16,
+    flex: 1,
   },
   cardType: {
-    fontFamily: "roboto",
-    fontWeight: "medium",
-    fontSize: PixelRatio.getFontScale() * 14,
-    color: "#FFFF",
+    fontSize: 14,
+    color: "#FFF",
   },
   cardNumber: {
-    fontFamily: "roboto",
-    fontWeight: "medium",
-    fontSize: PixelRatio.getFontScale() * 12,
-    color: "#FFFFFF",
+    fontSize: 12,
+    color: "#FFF",
   },
   VisaCardType: {
-    fontFamily: "roboto",
-    fontWeight: "medium",
-    fontSize: PixelRatio.getFontScale() * 14,
+    fontSize: 14,
     color: "#000",
   },
   VisaCardNumber: {
-    fontFamily: "roboto",
-    fontWeight: "medium",
-    fontSize: PixelRatio.getFontScale() * 12,
+    fontSize: 12,
     color: "#000",
   },
   radioButton: {
@@ -163,7 +153,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#FFFFFF",
-    marginRight: 10,
   },
   radioButtonSelected: {
     backgroundColor: "#FF7F50",
@@ -171,8 +160,9 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: "center",
     color: "#888",
-    fontSize: PixelRatio.getFontScale() * 16,
-    marginVertical: 24,
-    fontWeight: "semibold",
+    fontSize: 16,
+    marginTop: 24,
   },
 });
+
+export default PaymentCards;

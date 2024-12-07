@@ -116,7 +116,7 @@ const Cart = () => {
           </View>
           <View style={styles.paymentCardContainer}>
             <Text style={styles.paymentHeading}>Payment methods</Text>
-            <PaymentCards updateTrigger={false} />
+            <PaymentCards />
           </View>
           <View style={styles.orderContainer}>
             <View style={styles.totalContainer}>

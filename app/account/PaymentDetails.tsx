@@ -248,12 +248,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   paymentCardContainer: {
-    paddingBottom: "6%",
+    paddingBottom: "2%",
   },
   title: {
     fontSize: PixelRatio.getFontScale() * 20,
     fontWeight: "bold",
-    marginBottom: 20,
     color: "#3C2F2F",
   },
   cardItem: {

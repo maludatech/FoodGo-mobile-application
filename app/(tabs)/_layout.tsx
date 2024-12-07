@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
 
   tabBarStyle: {
     backgroundColor: "#EF2A39",
-    height: 64,
+    height: 60,
     position: "relative",
   },
   addButton: {

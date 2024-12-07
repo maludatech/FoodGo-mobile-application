@@ -116,7 +116,7 @@ const Cart = () => {
           </View>
           <View style={styles.paymentCardContainer}>
             <Text style={styles.paymentHeading}>Payment methods</Text>
-            <PaymentCards />
+            <PaymentCards updateTrigger={false} />
           </View>
           <View style={styles.orderContainer}>
             <View style={styles.totalContainer}>
@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
   },
   paymentCardContainer: {
     paddingHorizontal: "4%",
+    paddingBottom: "6%",
   },
   paymentHeading: {
     fontSize: PixelRatio.getFontScale() * 20,

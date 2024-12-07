@@ -16,7 +16,7 @@ interface Card {
   cardType: string;
 }
 
-const PaymentCards = () => {
+const PaymentCards = ({ updateTrigger }: { updateTrigger: boolean }) => {
   const { user } = useAuthContext();
 
   const userId = user?.userId;
@@ -49,7 +49,7 @@ const PaymentCards = () => {
 
   useEffect(() => {
     fetchCards();
-  }, [fetchCards]);
+  }, [fetchCards, updateTrigger]);
 
   return (
     <View style={styles.paymentContainer}>
@@ -169,9 +169,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF7F50",
   },
   emptyText: {
-    color: "#808080",
     textAlign: "center",
-    fontSize: PixelRatio.getFontScale() * 14,
-    fontFamily: "roboto",
+    color: "#888",
+    fontSize: PixelRatio.getFontScale() * 16,
+    marginVertical: 24,
+    fontWeight: "semibold",
   },
 });

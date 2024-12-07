@@ -27,6 +27,7 @@ const PaymentDetails = () => {
   const [cardDate, setCardDate] = useState("");
   const [cvv, setCvv] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(false);
 
   // Detect Card Type
   const detectCardType = (number: any) => {
@@ -43,17 +44,17 @@ const PaymentDetails = () => {
     const cardDateRegex = /^(0[1-9]|1[0-2])\/[0-9]{2}$/; // MM/YY format
     const cvvRegex = /^[0-9]{3}$/; // 3-digit CVV
 
-    const detectedType = detectCardType(cardNumber);
-    if (detectedType === "Unknown") {
-      Alert.alert("Validation Error", "We only accept Visa or MasterCard.");
-      return false;
-    }
-
     if (!cardNumberRegex.test(cardNumber)) {
       Alert.alert(
         "Validation Error",
         "Invalid card number. Must be 16 digits."
       );
+      return false;
+    }
+
+    const detectedType = detectCardType(cardNumber);
+    if (detectedType === "Unknown") {
+      Alert.alert("Validation Error", "We only accept Visa or MasterCard.");
       return false;
     }
 
@@ -99,6 +100,7 @@ const PaymentDetails = () => {
         setCardNumber("");
         setCardDate("");
         setCvv("");
+        setUpdateTrigger((prev) => !prev); // Trigger update
       } else {
         Alert.alert("Error adding card", "Please try again later.");
       }
@@ -139,8 +141,10 @@ const PaymentDetails = () => {
           </View>
 
           <View style={styles.secondContainer}>
-            <Text style={styles.title}>Payment Methods</Text>
-            <PaymentCards />
+            <View style={styles.paymentCardContainer}>
+              <Text style={styles.title}>Payment Methods</Text>
+              <PaymentCards updateTrigger={updateTrigger} />
+            </View>
             {/* Input Fields */}
             <Text style={styles.inputLabel}>Card Number</Text>
             <TextInput
@@ -243,10 +247,14 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
+  paymentCardContainer: {
+    paddingBottom: "6%",
+  },
   title: {
-    fontSize: 20,
+    fontSize: PixelRatio.getFontScale() * 20,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "#3C2F2F",
   },
   cardItem: {
     flexDirection: "row",
@@ -297,12 +305,5 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "#fff",
     fontSize: 16,
-  },
-  emptyText: {
-    textAlign: "center",
-    color: "#888",
-    fontSize: PixelRatio.getFontScale() * 16,
-    marginVertical: 24,
-    fontWeight: "semibold",
   },
 });

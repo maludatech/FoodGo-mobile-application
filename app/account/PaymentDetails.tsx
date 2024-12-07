@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -15,7 +15,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Icon from "react-native-vector-icons/Feather";
 import { useAuthContext } from "@/context/AuthContext";
-import PaymentCards from "@/components/PaymentCards";
 import { Image } from "react-native";
 
 interface Card {
@@ -35,7 +34,6 @@ const PaymentDetails = () => {
   const [cardDate, setCardDate] = useState("");
   const [cvv, setCvv] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [updateTrigger, setUpdateTrigger] = useState(false);
 
   // Fetch Cards
   const fetchCards = useCallback(async () => {
@@ -57,6 +55,10 @@ const PaymentDetails = () => {
       console.error("Error fetching cards: ", error);
       Alert.alert("Network Error", "Please try again later.");
     }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchCards();
   }, [userId]);
 
   // Detect Card Type
@@ -208,7 +210,12 @@ const PaymentDetails = () => {
                             •••• {card.cardNumber.slice(-4)}
                           </Text>
                         </View>
-                        <Icon name="delete" />
+                        <Icon
+                          name="trash-2"
+                          size={24}
+                          color={"#3C2F2F"}
+                          onPress={() => console.log(card.cardId)}
+                        />
                       </View>
                     );
                   })
